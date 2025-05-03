@@ -1,0 +1,270 @@
+.profileViewPage {
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.profileCard {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px 0 rgba(67, 97, 238, 0.08);
+  padding: 2.5rem;
+  max-width: 800px;
+  width: 100%;
+  position: relative;
+  padding-top: 4.5rem; /* extra space for badge */
+}
+
+.profileHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profileHeader h1 {
+  font-size: 2rem;
+  color: #222b45;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.role {
+  color: #4361EE;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.location {
+  color: #6c7a89;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.experience {
+  color: #4a5568;
+  font-size: 1rem;
+}
+
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.section h2 {
+  color: #222b45;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.aboutText {
+  color: #4a5568;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.expCard {
+  background: #f7faff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e9effd;
+}
+
+.expHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.expRole {
+  color: #222b45;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.expCompany {
+  color: #6c7a89;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.expDates {
+  color: #4361EE;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.expDesc {
+  color: #4a5568;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.skillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.skillChip {
+  background: #e9effd !important;
+  color: #4361EE !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  font-size: 0.95rem !important;
+}
+
+.accessBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  color: #222b45;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: #e9effd;
+  padding: 0.18rem 0.7rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px 0 rgba(67, 97, 238, 0.08);
+  z-index: 10;
+  border: 1px solid #4361EE;
+  margin-bottom: 1rem;
+  max-width: 100%;
+  width: max-content;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-wrap: break-word;
+  flex-direction: row;
+  text-align: center;
+}
+
+.badgeIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.badgeText {
+  font-size: 0.95rem;
+}
+
+.badgeCount {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.contactSection {
+  margin-top: 2rem;
+  background: #f7faff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e9effd;
+}
+
+.contactSection h2 {
+  color: #222b45;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  color: #4a5568;
+  font-size: 1.1rem;
+}
+
+.lockedContact {
+  text-align: center;
+  padding: 2rem;
+}
+
+.lockedContact p {
+  color: #4a5568;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.loading, .error {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #4361EE;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+.contactEmail {
+  font-size: 0.97rem;
+  color: #4361EE;
+  word-break: break-all;
+}
+
+@media (max-width: 768px) {
+  .profileCard {
+    padding: 1.5rem;
+  }
+
+  .profileHeader h1 {
+    font-size: 1.75rem;
+  }
+
+  .role {
+    font-size: 1.1rem;
+  }
+
+  .expHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .expRole {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .accessBadge {
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+    padding: 0.18rem 0.4rem;
+  }
+  .badgeIcon {
+    margin-bottom: 0.1rem;
+  }
+  .badgeText {
+    margin-bottom: 0.1rem;
+    font-size: 0.9rem;
+  }
+  .badgeCount {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+} 
+
+@media (max-width: 768px) {
+  .accessBadge {
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 0.9rem;
+    padding: 0.2rem 0.7rem;
+  }
+} 

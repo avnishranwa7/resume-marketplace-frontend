@@ -1,0 +1,72 @@
+<svg width="500" height="400" viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="250" cy="200" r="180" fill="#EBF4FF" />
+  
+  <!-- Resume Card -->
+  <rect x="150" y="80" width="200" height="280" rx="8" fill="white" stroke="#4361EE" stroke-width="2"/>
+  
+  <!-- Profile Section -->
+  <circle cx="190" cy="120" r="20" fill="#4361EE"/>
+  <rect x="220" y="110" width="100" height="10" rx="2" fill="#4361EE"/>
+  <rect x="220" y="125" width="80" height="8" rx="2" fill="#CBD5E0"/>
+  
+  <!-- Experience Section -->
+  <rect x="170" y="160" width="80" height="12" rx="2" fill="#4361EE"/>
+  <rect x="170" y="180" width="160" height="1" fill="#E2E8F0"/>
+  <!-- Experience Item 1 -->
+  <rect x="170" y="190" width="60" height="8" rx="2" fill="#4361EE"/>
+  <rect x="170" y="202" width="140" height="6" rx="2" fill="#CBD5E0"/>
+  <rect x="170" y="212" width="120" height="6" rx="2" fill="#CBD5E0"/>
+  <!-- Experience Item 2 -->
+  <rect x="170" y="228" width="60" height="8" rx="2" fill="#4361EE"/>
+  <rect x="170" y="240" width="140" height="6" rx="2" fill="#CBD5E0"/>
+  <rect x="170" y="250" width="120" height="6" rx="2" fill="#CBD5E0"/>
+  
+  <!-- Skills Section -->
+  <rect x="170" y="280" width="60" height="12" rx="2" fill="#4361EE"/>
+  <rect x="170" y="300" width="160" height="1" fill="#E2E8F0"/>
+  <!-- Skill Tags -->
+  <rect x="170" y="310" width="50" height="20" rx="10" fill="#EBF4FF" stroke="#4361EE"/>
+  <rect x="230" y="310" width="40" height="20" rx="10" fill="#EBF4FF" stroke="#4361EE"/>
+  <rect x="280" y="310" width="45" height="20" rx="10" fill="#EBF4FF" stroke="#4361EE"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="120" cy="160" r="30" fill="#4361EE" opacity="0.1"/>
+  <circle cx="380" cy="160" r="30" fill="#4361EE" opacity="0.1"/>
+  <circle cx="250" cy="120" r="30" fill="#4361EE" opacity="0.1"/>
+  
+  <!-- People Avatars with Details -->
+  <g transform="translate(90,130)">
+    <circle cx="30" cy="30" r="25" fill="#4361EE"/>
+    <circle cx="30" cy="22" r="10" fill="white"/>
+    <path d="M30 35C37.1797 35 43 40.8203 43 48V55H17V48C17 40.8203 22.8203 35 30 35Z" fill="white"/>
+  </g>
+  
+  <g transform="translate(350,130)">
+    <circle cx="30" cy="30" r="25" fill="#34D399"/>
+    <circle cx="30" cy="22" r="10" fill="white"/>
+    <path d="M30 35C37.1797 35 43 40.8203 43 48V55H17V48C17 40.8203 22.8203 35 30 35Z" fill="white"/>
+  </g>
+  
+  <g transform="translate(220,90)">
+    <circle cx="30" cy="30" r="25" fill="#F472B6"/>
+    <circle cx="30" cy="22" r="10" fill="white"/>
+    <path d="M30 35C37.1797 35 43 40.8203 43 48V55H17V48C17 40.8203 22.8203 35 30 35Z" fill="white"/>
+  </g>
+  
+  <!-- Search Icon with Glow -->
+  <circle cx="250" cy="200" r="25" stroke="#4361EE" stroke-width="3" filter="url(#glow)"/>
+  <line x1="267" y1="217" x2="285" y2="235" stroke="#4361EE" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Filters -->
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  
+  <!-- Connection Lines -->
+  <path d="M120 190 Q 180 220 250 200" stroke="#4361EE" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+  <path d="M380 190 Q 320 220 250 200" stroke="#4361EE" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+</svg> 

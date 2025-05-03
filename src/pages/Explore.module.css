@@ -1,0 +1,276 @@
+.explorePage {
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 2.5rem 1rem 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: #fff;
+  padding: 1.25rem 2rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px 0 rgba(67, 97, 238, 0.06);
+  margin-bottom: 2.5rem;
+  width: 100%;
+  max-width: 1100px;
+  justify-content: center;
+}
+
+.filterInput, .filterSelect {
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 1rem;
+  background: #f7faff;
+  color: #222b45;
+  min-width: 160px;
+  outline: none;
+  transition: border-color 0.2s;
+  height: 44px;
+  box-sizing: border-box;
+}
+
+.filterInput:focus, .filterSelect:focus {
+  border-color: #4361EE;
+}
+
+.filterSelect {
+  padding-right: 3rem !important;
+}
+
+.profileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1100px;
+  margin-bottom: 2.5rem;
+}
+
+.profileCard {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px 0 rgba(67, 97, 238, 0.08);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+  max-width: 400px;
+}
+
+.profileCard:hover {
+  box-shadow: 0 6px 24px 0 rgba(67, 97, 238, 0.14);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.profileCard h3 {
+  margin: 0.5rem 0 0 0;
+  font-size: 1.2rem;
+  color: #222b45;
+  font-weight: 700;
+}
+
+.role {
+  color: #4361EE;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.yoe {
+  color: #6c7a89;
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0.75rem 0;
+}
+
+.location {
+  color: #6c7a89;
+  font-size: 0.98rem;
+  margin-bottom: 0.5rem;
+}
+
+.skillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.skillChip {
+  background: #e9effd !important;
+  color: #4361EE !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  font-size: 0.95rem !important;
+}
+
+.viewBtn {
+  margin-top: 0.75rem !important;
+  border-radius: 8px !important;
+  border-color: #4361EE !important;
+  color: #4361EE !important;
+  text-transform: none !important;
+  font-weight: 500;
+  width: 100%;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.pageBtn {
+  border-radius: 8px !important;
+  border-color: #4361EE !important;
+  color: #4361EE !important;
+  text-transform: none !important;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.pageInfo {
+  font-size: 1.1rem;
+  color: #222b45;
+  font-weight: 600;
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #6c7a89;
+  font-size: 1.15rem;
+  padding: 2rem 0;
+}
+
+.filterActions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.applyBtn {
+  background-color: #4361EE !important;
+  color: #fff !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  border-radius: 8px !important;
+  min-width: 100px;
+  height: 44px;
+}
+
+.resetBtn {
+  border-radius: 8px !important;
+  border-color: #e2e8f0 !important;
+  color: #4a5568 !important;
+  background: #f7faff !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  height: 44px;
+  min-width: 100px;
+  margin: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.resetBtn:hover {
+  background: #e9effd !important;
+  color: #222b45 !important;
+}
+
+@media (max-width: 900px) {
+  .profileGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem 0.5rem;
+    gap: 0.5rem;
+    min-width: 0;
+    overflow-x: auto;
+  }
+  .filterInput, .filterSelect, .resetBtn {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .profileGrid {
+    gap: 1.25rem;
+  }
+  .profileCard {
+    padding: 1.25rem 0.5rem 1rem 0.5rem;
+    font-size: 0.98rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .profileGrid {
+    grid-template-columns: 1fr;
+  }
+  .profileCard {
+    padding: 1rem 0.25rem 0.75rem 0.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+.keywordBar {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  justify-content: center;
+}
+
+.keywordInput {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 1.08rem;
+  background: #fff;
+  color: #222b45;
+  outline: none;
+  transition: border-color 0.2s;
+  box-shadow: 0 2px 12px 0 rgba(67, 97, 238, 0.04);
+}
+
+.keywordInput:focus {
+  border-color: #4361EE;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  margin-right: 1rem;
+}
+
+.filterLabel {
+  font-size: 0.98rem;
+  color: #4a5568;
+  font-weight: 500;
+  margin-bottom: 0.15rem;
+  margin-right: 0;
+  display: block;
+  text-align: left;
+}
+
+.requiredAsterisk {
+  color: #e53e3e;
+  font-size: 1.1em;
+  margin-left: 0.1em;
+} 
