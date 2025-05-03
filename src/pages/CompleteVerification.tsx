@@ -18,7 +18,7 @@ const CompleteVerification: React.FC = () => {
       return;
     }
     axios.put(`${baseUrl}/auth/complete-verification`, { email, token })
-      .then(res => {
+      .then(() => {
         setStatus('success');
         setMessage('Your account has been successfully verified! You can now log in.');
       })

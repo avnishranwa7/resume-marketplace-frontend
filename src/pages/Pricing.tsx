@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './Pricing.module.css';
 import Button from '@mui/material/Button';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';

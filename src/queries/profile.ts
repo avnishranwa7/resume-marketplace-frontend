@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getProfile, getProfiles, updateProfile } from "../api/profile";
 import { checkResponseSuccess } from "./util";
 import { UpdateProfileRequest } from "../types/requests";
