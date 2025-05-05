@@ -6,8 +6,14 @@ import Button from "@mui/material/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGetProfiles } from "../queries/profile";
 import { Experience } from "../types";
-import { Select, MenuItem, Divider, Checkbox, ListItemText, Radio } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
+import {
+  Select,
+  MenuItem,
+  Divider,
+  Checkbox,
+  ListItemText,
+  Radio,
+} from "@mui/material";
 
 const mockProfiles = [
   {
@@ -21,7 +27,7 @@ const mockProfiles = [
     tags: ["Frontend", "Backend"],
     type: "job_seeker",
     country: "USA",
-    state: "NY"
+    state: "NY",
   },
   {
     id: 2,
@@ -34,7 +40,7 @@ const mockProfiles = [
     tags: ["ML", "AI"],
     type: "job_seeker",
     country: "USA",
-    state: "CA"
+    state: "CA",
   },
   {
     id: 3,
@@ -47,7 +53,7 @@ const mockProfiles = [
     tags: ["Management"],
     type: "recruiter",
     country: "USA",
-    state: "TX"
+    state: "TX",
   },
   {
     id: 4,
@@ -60,7 +66,7 @@ const mockProfiles = [
     tags: ["Management"],
     type: "recruiter",
     country: "USA",
-    state: "TX"
+    state: "TX",
   },
   {
     id: 5,
@@ -73,7 +79,7 @@ const mockProfiles = [
     tags: ["Management"],
     type: "recruiter",
     country: "USA",
-    state: "TX"
+    state: "TX",
   },
   {
     id: 6,
@@ -86,7 +92,7 @@ const mockProfiles = [
     tags: ["Management"],
     type: "recruiter",
     country: "USA",
-    state: "TX"
+    state: "TX",
   },
   // ...add more mock profiles as needed
 ];
@@ -103,40 +109,44 @@ const extraRoles = [
   "Mobile Developer",
   "Project Manager",
   "Business Analyst",
-  "Software Developer"
+  "Software Developer",
 ];
-const allRoles = Array.from(new Set([
-  ...mockProfiles.map(profile => profile.role),
-  ...extraRoles
-]));
+const allRoles = Array.from(
+  new Set([...mockProfiles.map((profile) => profile.role), ...extraRoles])
+);
 
 const PAGE_SIZE = 6;
 
-const calculateYearsOfExperience = (experience: Experience[]): { years: number; months: number } => {
+const calculateYearsOfExperience = (
+  experience: Experience[]
+): { years: number; months: number } => {
   if (!experience || experience.length === 0) return { years: 0, months: 0 };
 
   const now = new Date();
   const totalMonths = experience.reduce((total, exp) => {
     const startDate = new Date(exp.startDate);
     const endDate = exp.currentlyWorking ? now : new Date(exp.endDate || now);
-    
-    const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
-                  (endDate.getMonth() - startDate.getMonth());
-    
+
+    const months =
+      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (endDate.getMonth() - startDate.getMonth());
+
     return total + months;
   }, 0);
 
   return {
     years: Math.floor(totalMonths / 12),
-    months: totalMonths % 12
+    months: totalMonths % 12,
   };
 };
 
 const formatExperience = (years: number, months: number): string => {
   if (years === 0 && months === 0) return "No experience";
-  if (years === 0) return `${months} month${months === 1 ? '' : 's'}`;
-  if (months === 0) return `${years} year${years === 1 ? '' : 's'}`;
-  return `${years} year${years === 1 ? '' : 's'} ${months} month${months === 1 ? '' : 's'}`;
+  if (years === 0) return `${months} month${months === 1 ? "" : "s"}`;
+  if (months === 0) return `${years} year${years === 1 ? "" : "s"}`;
+  return `${years} year${years === 1 ? "" : "s"} ${months} month${
+    months === 1 ? "" : "s"
+  }`;
 };
 
 const Explore = () => {
@@ -146,26 +156,25 @@ const Explore = () => {
     yoe: "",
     role: "",
     noticePeriod: "",
-    immediatelyAvailable: false
+    immediatelyAvailable: false,
   });
   const [appliedFilters, setAppliedFilters] = useState({
     keyword: "",
     yoe: "",
     role: "",
     noticePeriod: "",
-    immediatelyAvailable: false
+    immediatelyAvailable: false,
   });
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
-  const {data} = useGetProfiles(
+  const { data } = useGetProfiles(
     appliedFilters.role,
     Number(appliedFilters.yoe),
     appliedFilters.immediatelyAvailable,
     appliedFilters.noticePeriod
   );
   const profiles = !appliedFilters.role ? [] : data ?? [];
-
 
   // On mount, read filters from URL
   useEffect(() => {
@@ -174,7 +183,7 @@ const Explore = () => {
       yoe: searchParams.get("yoe") || "",
       role: searchParams.get("role") || "",
       noticePeriod: searchParams.get("noticePeriod") || "",
-      immediatelyAvailable: searchParams.get("immediatelyAvailable") === "true"
+      immediatelyAvailable: searchParams.get("immediatelyAvailable") === "true",
     };
     setFilters(urlFilters);
     setAppliedFilters(urlFilters);
@@ -183,16 +192,16 @@ const Explore = () => {
 
   // Pagination logic
   const totalPages = Math.ceil(profiles.length / PAGE_SIZE);
-  const paginatedProfiles = profiles.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const paginatedProfiles = profiles.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleApplyFilters = useCallback(() => {
@@ -201,8 +210,8 @@ const Explore = () => {
     // Update URL
     const params: Record<string, string> = {};
     Object.entries(filters).forEach(([key, value]) => {
-      if (key === 'immediatelyAvailable') {
-        if (value) params[key] = 'true';
+      if (key === "immediatelyAvailable") {
+        if (value) params[key] = "true";
       } else if (value) {
         params[key] = value as string;
       }
@@ -216,14 +225,14 @@ const Explore = () => {
       yoe: "",
       role: "",
       noticePeriod: "",
-      immediatelyAvailable: false
+      immediatelyAvailable: false,
     });
     setAppliedFilters({
       keyword: "",
       yoe: "",
       role: "",
       noticePeriod: "",
-      immediatelyAvailable: false
+      immediatelyAvailable: false,
     });
     setPage(1);
     setSearchParams({});
@@ -234,38 +243,38 @@ const Explore = () => {
     const value = event.target.value;
     // If user clicks a notice period, always set that as the only notice period
     // If user toggles 'immediate', keep noticePeriod as is
-    const noticePeriodOptions = ['', '15', '30', '60', '90'];
+    const noticePeriodOptions = ["", "15", "30", "60", "90"];
     if (Array.isArray(value)) {
-      const hasImmediate = value.includes('immediate');
+      const hasImmediate = value.includes("immediate");
       // Find the last selected notice period (the one just clicked)
       const lastSelected = value[value.length - 1];
       if (noticePeriodOptions.includes(lastSelected)) {
-        setFilters(prev => ({
+        setFilters((prev) => ({
           ...prev,
           immediatelyAvailable: hasImmediate,
-          noticePeriod: lastSelected
+          noticePeriod: lastSelected,
         }));
       } else {
         // Only toggling 'immediate'
-        setFilters(prev => ({
+        setFilters((prev) => ({
           ...prev,
-          immediatelyAvailable: hasImmediate
+          immediatelyAvailable: hasImmediate,
         }));
       }
     } else {
-      setFilters(prev => ({ ...prev, noticePeriod: value }));
+      setFilters((prev) => ({ ...prev, noticePeriod: value }));
     }
   };
 
   // Compose the value for the Select component
   const noticePeriodSelectValue: string[] = [];
   if (filters.immediatelyAvailable) {
-    noticePeriodSelectValue.push('immediate');
+    noticePeriodSelectValue.push("immediate");
   }
   if (
-    typeof filters.noticePeriod === 'string' &&
-    filters.noticePeriod !== '' &&
-    filters.noticePeriod !== 'immediate'
+    typeof filters.noticePeriod === "string" &&
+    filters.noticePeriod !== "" &&
+    filters.noticePeriod !== "immediate"
   ) {
     noticePeriodSelectValue.push(filters.noticePeriod);
   }
@@ -288,13 +297,17 @@ const Explore = () => {
             <option value="" disabled>
               Select a role
             </option>
-            {allRoles.map(role => (
-              <option key={role} value={role}>{role}</option>
+            {allRoles.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
             ))}
           </select>
         </div>
         <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor="keyword">Keywords</label>
+          <label className={styles.filterLabel} htmlFor="keyword">
+            Keywords
+          </label>
           <input
             id="keyword"
             className={styles.filterInput}
@@ -306,16 +319,28 @@ const Explore = () => {
           />
         </div>
         <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor="yoe">YOE</label>
-          <select name="yoe" id="yoe" value={filters.yoe} onChange={handleFilterChange} className={styles.filterSelect}>
+          <label className={styles.filterLabel} htmlFor="yoe">
+            YOE
+          </label>
+          <select
+            name="yoe"
+            id="yoe"
+            value={filters.yoe}
+            onChange={handleFilterChange}
+            className={styles.filterSelect}
+          >
             <option value="">YOE</option>
-            {[1,2,3,4,5,6,7,8,9,10].map(y => (
-              <option key={y} value={y}>{y} Years</option>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((y) => (
+              <option key={y} value={y}>
+                {y} Years
+              </option>
             ))}
           </select>
         </div>
         <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor="noticePeriod">Notice Period</label>
+          <label className={styles.filterLabel} htmlFor="noticePeriod">
+            Notice Period
+          </label>
           <Select
             id="noticePeriod"
             name="noticePeriod"
@@ -324,13 +349,14 @@ const Explore = () => {
             onChange={handleNoticePeriodDropdownChange}
             className={styles.filterSelect}
             renderValue={(selected) => {
-              if (!selected.length) return 'Select notice period';
+              if (!selected.length) return "Select notice period";
               const labels = [];
-              if (selected.includes('immediate')) labels.push('Immediately Available');
-              const period = selected.find((v: string) => v !== 'immediate');
-              if (period === '') labels.push('Any');
+              if (selected.includes("immediate"))
+                labels.push("Immediately Available");
+              const period = selected.find((v: string) => v !== "immediate");
+              if (period === "") labels.push("Any");
               else if (period) labels.push(`${period} days`);
-              return labels.join(', ');
+              return labels.join(", ");
             }}
             displayEmpty
           >
@@ -340,23 +366,23 @@ const Explore = () => {
             </MenuItem>
             <Divider />
             <MenuItem value="">
-              <Radio checked={filters.noticePeriod === ''} />
+              <Radio checked={filters.noticePeriod === ""} />
               <ListItemText primary="Any" />
             </MenuItem>
             <MenuItem value="15">
-              <Radio checked={filters.noticePeriod === '15'} />
+              <Radio checked={filters.noticePeriod === "15"} />
               <ListItemText primary="15 days" />
             </MenuItem>
             <MenuItem value="30">
-              <Radio checked={filters.noticePeriod === '30'} />
+              <Radio checked={filters.noticePeriod === "30"} />
               <ListItemText primary="30 days" />
             </MenuItem>
             <MenuItem value="60">
-              <Radio checked={filters.noticePeriod === '60'} />
+              <Radio checked={filters.noticePeriod === "60"} />
               <ListItemText primary="60 days" />
             </MenuItem>
             <MenuItem value="90">
-              <Radio checked={filters.noticePeriod === '90'} />
+              <Radio checked={filters.noticePeriod === "90"} />
               <ListItemText primary="90 days" />
             </MenuItem>
           </Select>
@@ -367,7 +393,15 @@ const Explore = () => {
           id="applyBtn"
           variant="contained"
           className={styles.applyBtn}
-          sx={{ backgroundColor: '#4361EE', color: '#fff', fontWeight: 500, textTransform: 'none', borderRadius: '8px', minWidth: '100px', marginRight: '1rem' }}
+          sx={{
+            backgroundColor: "#4361EE",
+            color: "#fff",
+            fontWeight: 500,
+            textTransform: "none",
+            borderRadius: "8px",
+            minWidth: "100px",
+            marginRight: "1rem",
+          }}
           onClick={handleApplyFilters}
         >
           Apply
@@ -377,7 +411,14 @@ const Explore = () => {
           variant="outlined"
           className={styles.resetBtn}
           onClick={handleResetFilters}
-          sx={{ borderColor: '#e2e8f0', color: '#4a5568', fontWeight: 500, textTransform: 'none', borderRadius: '8px', minWidth: '100px' }}
+          sx={{
+            borderColor: "#e2e8f0",
+            color: "#4a5568",
+            fontWeight: 500,
+            textTransform: "none",
+            borderRadius: "8px",
+            minWidth: "100px",
+          }}
         >
           Reset
         </Button>
@@ -390,38 +431,50 @@ const Explore = () => {
               : "No matching profiles. Please try different filters."}
           </div>
         ) : (
-          profiles.map(profile => {
-            const { years, months } = calculateYearsOfExperience(profile.experience);
+          profiles.map((profile) => {
+            const { years, months } = calculateYearsOfExperience(
+              profile.experience
+            );
             return (
               <div key={profile._id} className={styles.profileCard}>
-                <Avatar sx={{ bgcolor: "#F472B6", width: 84, height: 84, fontSize: 48, margin: '0 auto' }}>
+                <Avatar
+                  sx={{
+                    bgcolor: "#F472B6",
+                    width: 84,
+                    height: 84,
+                    fontSize: 48,
+                    margin: "0 auto",
+                  }}
+                >
                   {profile.name[0]}
                 </Avatar>
                 <h3>{profile.name}</h3>
                 <p className={styles.role}>{profile.role}</p>
-                <p className={styles.yoe}>
-                  {formatExperience(years, months)}
-                </p>
+                <p className={styles.yoe}>{formatExperience(years, months)}</p>
                 <div className={styles.skillsList}>
                   {profile.skills.slice(0, 3).map((skill, idx) => (
-                    <Chip key={idx} label={skill} className={styles.skillChip} />
+                    <Chip
+                      key={idx}
+                      label={skill}
+                      className={styles.skillChip}
+                    />
                   ))}
                   {profile.skills.length > 3 && (
-                    <Chip 
-                      label={`+${profile.skills.length - 3} more`} 
+                    <Chip
+                      label={`+${profile.skills.length - 3} more`}
                       className={styles.skillChip}
-                      sx={{ 
-                        backgroundColor: '#e9effd !important',
-                        color: '#4361EE !important',
+                      sx={{
+                        backgroundColor: "#e9effd !important",
+                        color: "#4361EE !important",
                         fontWeight: 500,
-                        borderRadius: '8px !important',
-                        fontSize: '0.95rem !important'
+                        borderRadius: "8px !important",
+                        fontSize: "0.95rem !important",
                       }}
                     />
                   )}
                 </div>
-                <Button 
-                  variant="outlined" 
+                <Button
+                  variant="outlined"
                   className={styles.viewBtn}
                   onClick={() => navigate(`/profile/${profile._id}`)}
                 >
@@ -442,7 +495,9 @@ const Explore = () => {
           >
             Prev
           </Button>
-          <span className={styles.pageInfo}>{page} / {totalPages}</span>
+          <span className={styles.pageInfo}>
+            {page} / {totalPages}
+          </span>
           <Button
             variant="outlined"
             onClick={() => setPage(page + 1)}
@@ -457,4 +512,4 @@ const Explore = () => {
   );
 };
 
-export default Explore; 
+export default Explore;
