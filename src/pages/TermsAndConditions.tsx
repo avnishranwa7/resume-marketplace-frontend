@@ -3,9 +3,9 @@ import "../styles/TermsAndConditions.css";
 
 const TermsAndConditions: React.FC = () => {
   return (
-    <div className="terms-container">
+    <div className="privacy-container">
+      <div className="privacy-content">
       <h1>Terms and Conditions</h1>
-      <div className="terms-content">
         <section>
           <h2>1. Introduction</h2>
           <p>

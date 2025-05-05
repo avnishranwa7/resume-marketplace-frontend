@@ -18,6 +18,8 @@ import ActivateAccount from "./pages/ActivateAccount";
 import { AuthProvider } from "./context/AuthContext";
 import CompleteVerification from "./pages/CompleteVerification";
 import BuyContacts from "./pages/BuyContacts";
+import ShippingAndDelivery from './pages/ShippingAndDelivery';
+import CancellationAndRefund from './pages/CancellationAndRefund';
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -62,6 +64,8 @@ const App: React.FC = () => {
                 <Route path="/terms" element={<TermsAndConditions />} />
                 <Route path="/contact" element={<ContactUs />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/shipping" element={<ShippingAndDelivery />} />
+                <Route path="/refund" element={<CancellationAndRefund />} />
               </Routes>
             </main>
             <Footer />

@@ -51,7 +51,7 @@ const ContactUs: React.FC = () => {
   return (
     <div className="contact-container">
       <div className="contact-content">
-        <div className="contact-info">
+        <div className="contact-info-blue">
           <h1>Contact Us</h1>
           <p>
             Have questions? We'd love to hear from you. Send us a message and

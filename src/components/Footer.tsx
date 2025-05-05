@@ -36,6 +36,12 @@ const Footer: React.FC = () => {
             <li>
               <Link to="/privacy">Privacy Policy</Link>
             </li>
+            <li>
+              <Link to="/shipping">Shipping & Delivery Policy</Link>
+            </li>
+            <li>
+              <Link to="/refund">Cancellation & Refund Policy</Link>
+            </li>
           </ul>
         </div>
         <div className="footer-section">
