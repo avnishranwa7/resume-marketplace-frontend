@@ -13,6 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ActivateAccount from './pages/ActivateAccount';
 import { AuthProvider } from './context/AuthContext';
 import CompleteVerification from './pages/CompleteVerification';
+import BuyContacts from './pages/BuyContacts';
 
 import {
   QueryClient,
@@ -39,6 +40,7 @@ const App: React.FC = () => {
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/profile/:id" element={<ProfileView />} />
+                <Route path="/buy-contacts" element={<BuyContacts />} />
                 {/* Add more routes as we create more pages */}
               </Routes>
             </main>

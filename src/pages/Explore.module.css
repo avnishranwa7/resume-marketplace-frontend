@@ -273,4 +273,16 @@
   color: #e53e3e;
   font-size: 1.1em;
   margin-left: 0.1em;
+}
+
+.immediatelyAvailableCheckbox {
+  display: flex;
+  align-items: center;
+  align-self: flex-end;
+  min-height: 40px;
+}
+
+.immediatelyAvailableCheckbox input[type="checkbox"] {
+  margin-right: 0.5rem;
+  transform: scale(1.2);
 } 

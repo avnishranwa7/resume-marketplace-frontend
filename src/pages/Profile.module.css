@@ -424,4 +424,42 @@ input, textarea, .editInput, .editTextarea {
   display: flex;
   flex-direction: column;
   margin-bottom: 0;
+}
+
+.noticePeriodText {
+  color: #2563eb;
+  background: #e9effd;
+  padding: 0.25em 0.75em;
+  border-radius: 8px;
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: 0.25em;
+  margin-right: 0.5em;
+  align-items: center;
+}
+
+.immediatelyAvailableText {
+  color: #059669;
+  background: #e0f7ef;
+  padding: 0.25em 0.75em;
+  border-radius: 8px;
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: 0.25em;
+}
+
+.immediatelyAvailableText input[type="checkbox"] {
+  background: #fff !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  -webkit-text-fill-color: #222b45 !important;
+  color: #222b45 !important;
+  caret-color: #222b45 !important;
+  transition: background-color 5000s ease-in-out 0s;
 } 

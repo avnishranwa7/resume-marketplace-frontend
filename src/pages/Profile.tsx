@@ -27,10 +27,15 @@ const Profile = () => {
     setEditMode(false);
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setEditProfile(prev => prev ? { ...prev, [name]: value } : prev);
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    setEditProfile(prev => prev ? {
+      ...prev,
+      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : name==="immediatelyAvailable" ? value==="true" ? true : false : value
+    } : prev);
   };
+
+  console.log(editProfile);
 
   const handleSkillsChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEditProfile(prev => prev ? { ...prev, skills: e.target.value.split(",").map(s => s.trim()) } : prev);

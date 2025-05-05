@@ -4,13 +4,13 @@ import { checkResponseSuccess } from "./util";
 import { UpdateProfileRequest } from "../types/requests";
 import axiosInstance from '../api/axiosInstance';
 
-export const useGetProfiles = (role: string) => {
+export const useGetProfiles = (role: string, experience: number, immediatelyAvailable: boolean, noticePeriod: string) => {
     const queryFn = async () => {
-        const response = await getProfiles(role);
+        const response = await getProfiles(role, experience, immediatelyAvailable, noticePeriod==="" ? 0 : Number(noticePeriod));
         return checkResponseSuccess(response);
     };
     return useQuery({
-        queryKey: ["profiles"],
+        queryKey: ["profiles", role, experience, immediatelyAvailable, noticePeriod],
         queryFn,
         enabled: !!role
     })

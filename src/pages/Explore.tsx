@@ -6,6 +6,8 @@ import Button from "@mui/material/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGetProfiles } from "../queries/profile";
 import { Experience } from "../types";
+import { Select, MenuItem, Divider, Checkbox, ListItemText, Radio } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 const mockProfiles = [
   {
@@ -89,13 +91,6 @@ const mockProfiles = [
   // ...add more mock profiles as needed
 ];
 
-const countryStateMap: Record<string, string[]> = {
-  USA: ["NY", "CA", "TX", "WA", "FL", "IL"],
-  Canada: ["ON", "QC", "BC", "AB", "MB"],
-  UK: ["England", "Scotland", "Wales", "Northern Ireland"],
-  India: ["MH", "DL", "KA", "TN", "GJ"]
-};
-const allCountries = Object.keys(countryStateMap);
 const extraRoles = [
   "Frontend Developer",
   "Backend Developer",
@@ -149,31 +144,37 @@ const Explore = () => {
   const [filters, setFilters] = useState({
     keyword: "",
     yoe: "",
-    state: "",
-    country: "",
-    role: ""
+    role: "",
+    noticePeriod: "",
+    immediatelyAvailable: false
   });
   const [appliedFilters, setAppliedFilters] = useState({
     keyword: "",
     yoe: "",
-    state: "",
-    country: "",
-    role: ""
+    role: "",
+    noticePeriod: "",
+    immediatelyAvailable: false
   });
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
-  const {data} = useGetProfiles(appliedFilters.role);
+  const {data} = useGetProfiles(
+    appliedFilters.role,
+    Number(appliedFilters.yoe),
+    appliedFilters.immediatelyAvailable,
+    appliedFilters.noticePeriod
+  );
   const profiles = !appliedFilters.role ? [] : data ?? [];
+
 
   // On mount, read filters from URL
   useEffect(() => {
     const urlFilters = {
       keyword: searchParams.get("keyword") || "",
       yoe: searchParams.get("yoe") || "",
-      state: searchParams.get("state") || "",
-      country: searchParams.get("country") || "",
-      role: searchParams.get("role") || ""
+      role: searchParams.get("role") || "",
+      noticePeriod: searchParams.get("noticePeriod") || "",
+      immediatelyAvailable: searchParams.get("immediatelyAvailable") === "true"
     };
     setFilters(urlFilters);
     setAppliedFilters(urlFilters);
@@ -186,11 +187,12 @@ const Explore = () => {
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (name === "country") {
-      setFilters(prev => ({ ...prev, country: value, state: "" })); // reset state when country changes
-    } else {
-      setFilters(prev => ({ ...prev, [name]: value }));
-    }
+    setFilters(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
   };
 
   const handleApplyFilters = useCallback(() => {
@@ -199,7 +201,11 @@ const Explore = () => {
     // Update URL
     const params: Record<string, string> = {};
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params[key] = value;
+      if (key === 'immediatelyAvailable') {
+        if (value) params[key] = 'true';
+      } else if (value) {
+        params[key] = value as string;
+      }
     });
     setSearchParams(params);
   }, [filters, setSearchParams]);
@@ -208,20 +214,61 @@ const Explore = () => {
     setFilters({
       keyword: "",
       yoe: "",
-      state: "",
-      country: "",
-      role: ""
+      role: "",
+      noticePeriod: "",
+      immediatelyAvailable: false
     });
     setAppliedFilters({
       keyword: "",
       yoe: "",
-      state: "",
-      country: "",
-      role: ""
+      role: "",
+      noticePeriod: "",
+      immediatelyAvailable: false
     });
     setPage(1);
     setSearchParams({});
   };
+
+  // Handler for the custom dropdown
+  const handleNoticePeriodDropdownChange = (event: any) => {
+    const value = event.target.value;
+    // If user clicks a notice period, always set that as the only notice period
+    // If user toggles 'immediate', keep noticePeriod as is
+    const noticePeriodOptions = ['', '15', '30', '60', '90'];
+    if (Array.isArray(value)) {
+      const hasImmediate = value.includes('immediate');
+      // Find the last selected notice period (the one just clicked)
+      const lastSelected = value[value.length - 1];
+      if (noticePeriodOptions.includes(lastSelected)) {
+        setFilters(prev => ({
+          ...prev,
+          immediatelyAvailable: hasImmediate,
+          noticePeriod: lastSelected
+        }));
+      } else {
+        // Only toggling 'immediate'
+        setFilters(prev => ({
+          ...prev,
+          immediatelyAvailable: hasImmediate
+        }));
+      }
+    } else {
+      setFilters(prev => ({ ...prev, noticePeriod: value }));
+    }
+  };
+
+  // Compose the value for the Select component
+  const noticePeriodSelectValue: string[] = [];
+  if (filters.immediatelyAvailable) {
+    noticePeriodSelectValue.push('immediate');
+  }
+  if (
+    typeof filters.noticePeriod === 'string' &&
+    filters.noticePeriod !== '' &&
+    filters.noticePeriod !== 'immediate'
+  ) {
+    noticePeriodSelectValue.push(filters.noticePeriod);
+  }
 
   return (
     <div className={styles.explorePage}>
@@ -268,29 +315,51 @@ const Explore = () => {
           </select>
         </div>
         <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor="country">Country</label>
-          <select name="country" id="country" value={filters.country} onChange={handleFilterChange} className={styles.filterSelect}>
-            <option value="">Country</option>
-            {allCountries.map(country => (
-              <option key={country} value={country}>{country}</option>
-            ))}
-          </select>
-        </div>
-        <div className={styles.filterGroup}>
-          <label className={styles.filterLabel} htmlFor="state">State</label>
-          <select
-            name="state"
-            id="state"
-            value={filters.state}
-            onChange={handleFilterChange}
+          <label className={styles.filterLabel} htmlFor="noticePeriod">Notice Period</label>
+          <Select
+            id="noticePeriod"
+            name="noticePeriod"
+            multiple
+            value={noticePeriodSelectValue}
+            onChange={handleNoticePeriodDropdownChange}
             className={styles.filterSelect}
-            disabled={!filters.country}
+            renderValue={(selected) => {
+              if (!selected.length) return 'Select notice period';
+              const labels = [];
+              if (selected.includes('immediate')) labels.push('Immediately Available');
+              const period = selected.find((v: string) => v !== 'immediate');
+              if (period === '') labels.push('Any');
+              else if (period) labels.push(`${period} days`);
+              return labels.join(', ');
+            }}
+            displayEmpty
           >
-            <option value="">State</option>
-            {filters.country && countryStateMap[filters.country]?.map(state => (
-              <option key={state} value={state}>{state}</option>
-            ))}
-          </select>
+            <MenuItem value="immediate">
+              <Checkbox checked={filters.immediatelyAvailable} />
+              <ListItemText primary="Immediately Available" />
+            </MenuItem>
+            <Divider />
+            <MenuItem value="">
+              <Radio checked={filters.noticePeriod === ''} />
+              <ListItemText primary="Any" />
+            </MenuItem>
+            <MenuItem value="15">
+              <Radio checked={filters.noticePeriod === '15'} />
+              <ListItemText primary="15 days" />
+            </MenuItem>
+            <MenuItem value="30">
+              <Radio checked={filters.noticePeriod === '30'} />
+              <ListItemText primary="30 days" />
+            </MenuItem>
+            <MenuItem value="60">
+              <Radio checked={filters.noticePeriod === '60'} />
+              <ListItemText primary="60 days" />
+            </MenuItem>
+            <MenuItem value="90">
+              <Radio checked={filters.noticePeriod === '90'} />
+              <ListItemText primary="90 days" />
+            </MenuItem>
+          </Select>
         </div>
       </div>
       <div className={styles.filterActions}>

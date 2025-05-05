@@ -57,4 +57,6 @@ export interface ProfileData {
   skills: string[];
   phone?: string;
   yearsOfExperience?: number;
+  immediatelyAvailable?: boolean;
+  noticePeriod?: number;
 }

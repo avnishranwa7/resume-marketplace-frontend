@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import styles from './ProfileView.module.css';
 import Button from '@mui/material/Button';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
@@ -10,14 +10,20 @@ import axiosInstance from '../api/axiosInstance';
 import ProfileCard from '../components/ProfileCard';
 import { useGetProfile, useUnlockProfile } from '../queries/profile';
 import Snackbar from '@mui/material/Snackbar';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 
 const ProfileView = () => {
   const { id } = useParams();
   const [hasAccess, setHasAccess] = useState(false);
   const [remainingAccess, setRemainingAccess] = useState(0);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [modal, setModal] = useState({ open: false, message: '' });
   const unlockProfileMutation = useUnlockProfile();
   const [contactInfo, setContactInfo] = useState<{ email?: string; phone?: string } | null>(null);
+  const nav = useNavigate();
 
   const { data: profile, isLoading, error } = useGetProfile(id ?? '', "id");
 
@@ -83,8 +89,14 @@ const ProfileView = () => {
           fetchProfileAccess();
           fetchAvailableContacts();
         },
-        onError: () => {
-          setSnackbar({ open: true, message: 'Something went wrong. Please try again.' });
+        onError: (error: any) => {
+          let msg = 'Something went wrong. Please try again.';
+          if (error?.response?.data?.message === 'Insufficient profile contacts') {
+            msg = 'You do not have enough contact unlocks. Would you like to buy more?';
+            setModal({ open: true, message: msg });
+            return;
+          }
+          setSnackbar({ open: true, message: msg });
         },
       }
     );
@@ -154,6 +166,16 @@ const ProfileView = () => {
           </div>
         )}
       </div>
+      <Dialog open={modal.open} onClose={() => setModal({ open: false, message: '' })}>
+        <DialogTitle>Insufficient Contacts</DialogTitle>
+        <DialogContent sx={{ marginTop: '-16px' }}>
+          <p>{modal.message}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setModal({ open: false, message: '' })} color="primary" variant="outlined">Cancel</Button>
+          <Button onClick={() => { setModal({ open: false, message: '' }); nav('/buy-contacts'); }} color="primary" variant="contained">Buy More</Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}

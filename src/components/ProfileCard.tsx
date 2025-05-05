@@ -12,6 +12,9 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CircularProgress from '@mui/material/CircularProgress';
 import EditIcon from '@mui/icons-material/Edit';
 import { ProfileData } from '../types';
+import EmailIcon from '@mui/icons-material/Email';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface ProfileCardProps {
   profile: ProfileData;
@@ -67,6 +70,20 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     }
   }, [editMode]);
 
+  // Dedicated handler for notice period select
+  const handleNoticePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (onChange) {
+      onChange({
+        ...e,
+        target: {
+          ...e.target,
+          name: "noticePeriod",
+          value: e.target.value
+        }
+      } as unknown as React.ChangeEvent<HTMLInputElement>);
+    }
+  };
+
   return (
     <div className={styles.profileCard}>
       <div className={styles.editProfileTopRight}>
@@ -101,27 +118,74 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       </div>
       <div className={styles.profileInfo}>
         {editMode && editProfile && onChange ? (
-          <input
-            className={styles.editInput}
-            name="name"
-            value={editProfile.name}
-            onChange={onChange}
-            placeholder="Name"
-          />
+          <>
+            <input
+              className={styles.editInput}
+              name="name"
+              value={editProfile.name}
+              onChange={onChange}
+              placeholder="Name"
+            />
+            <input
+              className={styles.editInput}
+              name="role"
+              value={editProfile.role}
+              onChange={onChange}
+              placeholder="Role"
+            />
+            {/* Notice Period Select */}
+            <div className={styles.editRow}>
+              <select
+                id="noticePeriod"
+                name="noticePeriod"
+                value={editProfile.noticePeriod?.toString() || ""}
+                onChange={handleNoticePeriodChange}
+                className={styles.editInput + ' ' + styles.noticePeriodInput}
+                style={{ maxWidth: 340, width: '100%' }}
+              >
+                <option value="">Select notice period</option>
+                <option value="15">15 days</option>
+                <option value="30">30 days</option>
+                <option value="60">60 days</option>
+                <option value="90">90 days</option>
+              </select>
+            </div>
+            {/* Immediately Available Checkbox */}
+            <div className={styles.editRow} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '0.5rem' }}>
+              <label className={styles.editLabel} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                <input
+                  type="checkbox"
+                  name="immediatelyAvailable"
+                  checked={!!editProfile.immediatelyAvailable}
+                  onChange={e => onChange({
+                    ...e,
+                    target: {
+                      ...e.target,
+                      name: "immediatelyAvailable",
+                      value: (e.target as HTMLInputElement).checked ? "true" : ""
+                    }
+                  })}
+                  style={{ marginRight: '0.5rem', height: '1rem', width: '1rem' }}
+                />
+                Immediately Available
+              </label>
+            </div>
+          </>
         ) : (
           <h2>{profile.name}</h2>
         )}
-        {!editMode && <p className={styles.email}>{profile.email}</p>}
-        {editMode && editProfile && onChange ? (
-          <input
-            className={styles.editInput}
-            name="role"
-            value={editProfile.role}
-            onChange={onChange}
-            placeholder="Role"
-          />
-        ) : (
-          <p className={styles.email}>{profile.role}</p>
+        {!editMode && profile.email && <p className={styles.email}><EmailIcon sx={{ color: '#4361EE', fontSize: 18, verticalAlign: 'middle', marginRight: 0.5 }} />{profile.email}</p>}
+        {!editMode && profile.role && <p className={styles.email}><BusinessCenterIcon sx={{ color: '#6c7a89', fontSize: 18, verticalAlign: 'middle', marginRight: 0.5 }} />{profile.role}</p>}
+        {/* Show notice period and/or immediately available in non-editable mode */}
+        {!editMode && (
+          <>
+            {!!profile.noticePeriod && (
+              <p className={styles.noticePeriodText}><AccessTimeIcon sx={{ color: '#2563eb', fontSize: 18, verticalAlign: 'middle', marginRight: 0.5 }} />Notice Period: {profile.noticePeriod} days</p>
+            )}
+            {profile.immediatelyAvailable && (
+              <p className={styles.immediatelyAvailableText}><CheckCircleIcon sx={{ color: '#059669', fontSize: 18, verticalAlign: 'middle', marginRight: 0.5 }} />Immediately Available</p>
+            )}
+          </>
         )}
       </div>
       <div className={styles.aboutSection}>
@@ -213,7 +277,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                     control={
                       <Checkbox
                         checked={exp.currentlyWorking}
-                        onChange={e => onExperienceChange(idx, 'current', e.target.checked)}
+                        onChange={e => onExperienceChange(idx, 'currentlyWorking', e.target.checked)}
                         color="primary"
                       />
                     }
