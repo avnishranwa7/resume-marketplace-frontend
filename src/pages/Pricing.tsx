@@ -1,14 +1,20 @@
-import styles from './Pricing.module.css';
-import Button from '@mui/material/Button';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
+import styles from "./Pricing.module.css";
+import Button from "@mui/material/Button";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { useNavigate } from "react-router-dom";
 
 const Pricing = () => {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.pricingPage}>
       <div className={styles.pricingHeader}>
         <h1>Pay Per Profile</h1>
-        <p>View candidate profiles for free. Pay only when you want to contact them.</p>
+        <p>
+          View candidate profiles for free. Pay only when you want to contact
+          them.
+        </p>
       </div>
 
       <div className={styles.pricingCards}>
@@ -40,12 +46,12 @@ const Pricing = () => {
             variant="outlined"
             className={styles.planButton}
             sx={{
-              borderColor: '#4361EE',
-              color: '#4361EE',
-              '&:hover': {
-                borderColor: '#4361EE',
-                backgroundColor: '#f7faff'
-              }
+              borderColor: "#4361EE",
+              color: "#4361EE",
+              "&:hover": {
+                borderColor: "#4361EE",
+                backgroundColor: "#f7faff",
+              },
             }}
           >
             Current Plan
@@ -79,12 +85,13 @@ const Pricing = () => {
           </div>
           <Button
             variant="contained"
+            onClick={() => navigate("/buy-contacts")}
             className={styles.planButton}
             sx={{
-              backgroundColor: '#4361EE',
-              '&:hover': {
-                backgroundColor: '#3651d4'
-              }
+              backgroundColor: "#4361EE",
+              "&:hover": {
+                backgroundColor: "#3651d4",
+              },
             }}
           >
             Buy Contact Access
@@ -97,19 +104,36 @@ const Pricing = () => {
         <div className={styles.faqGrid}>
           <div className={styles.faqItem}>
             <h3>How does the pricing work?</h3>
-            <p>You can view all candidate profiles for free. When you find a candidate you want to contact, you can purchase access to their contact details for ₹49 per profile. Each purchase gives you access to one profile's contact information.</p>
+            <p>
+              You can view all candidate profiles for free. When you find a
+              candidate you want to contact, you can purchase access to their
+              contact details for ₹49 per profile. Each purchase gives you
+              access to one profile's contact information.
+            </p>
           </div>
           <div className={styles.faqItem}>
             <h3>Do I need to pay for each profile separately?</h3>
-            <p>Yes, each profile's contact details require a separate purchase of ₹49. This allows you to only pay for the candidates you're genuinely interested in contacting.</p>
+            <p>
+              Yes, each profile's contact details require a separate purchase of
+              ₹49. This allows you to only pay for the candidates you're
+              genuinely interested in contacting.
+            </p>
           </div>
           <div className={styles.faqItem}>
             <h3>Is there a subscription required?</h3>
-            <p>No, there's no subscription. You only pay for the specific profiles you want to contact. Each purchase is a one-time payment for that profile's contact details.</p>
+            <p>
+              No, there's no subscription. You only pay for the specific
+              profiles you want to contact. Each purchase is a one-time payment
+              for that profile's contact details.
+            </p>
           </div>
           <div className={styles.faqItem}>
             <h3>How do I pay?</h3>
-            <p>We accept all major credit cards, debit cards, and UPI payments through our secure payment gateway. Payment is required only when you want to access a profile's contact details.</p>
+            <p>
+              We accept all major credit cards, debit cards, and UPI payments
+              through our secure payment gateway. Payment is required only when
+              you want to access a profile's contact details.
+            </p>
           </div>
         </div>
       </div>
@@ -117,4 +141,4 @@ const Pricing = () => {
   );
 };
 
-export default Pricing; 
+export default Pricing;

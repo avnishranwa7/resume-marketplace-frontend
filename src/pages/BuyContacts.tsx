@@ -1,12 +1,135 @@
-import React, { useState } from 'react';
-import { Box, Typography, TextField, Button, Paper, Divider } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import InfoIcon from "@mui/icons-material/Info";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Divider,
+  Snackbar,
+  Alert,
+  AlertColor,
+} from "@mui/material";
+
+import { useMakePayment } from "../queries/payment";
+import axiosInstance from "../api/axiosInstance";
+import { useQueryClient } from "@tanstack/react-query";
 
 const PRICE_PER_CONTACT = 49;
 
+function loadScript(src: string) {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => {
+      resolve(true);
+    };
+    script.onerror = () => {
+      resolve(false);
+    };
+    document.body.appendChild(script);
+  });
+}
+
+async function displayRazorpay(
+  amount: number,
+  currency: string,
+  orderId: string,
+  navigate: () => void,
+  onCancel: () => void
+) {
+  const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+
+  if (!res) {
+    alert("Razorpay SDK failed to load. Are you online?");
+    return;
+  }
+
+  const options = {
+    key: "rzp_test_NI5OMd7KXnThWH",
+    amount: amount.toString(),
+    currency,
+    name: "Resume Marketplace",
+    order_id: orderId,
+    modal: {
+      ondismiss: async () => {
+        try {
+          await axiosInstance.post("/cancel-payment", {
+            userId: localStorage.getItem("userId"),
+          });
+          onCancel();
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    },
+    handler: async function (response) {
+      const res = await axiosInstance.post("/verify-payment", {
+        orderId,
+        userId: localStorage.getItem("userId"),
+        razorpayPaymentId: response.razorpay_payment_id,
+        razorpaySignature: response.razorpay_signature,
+      });
+      if (res.status === 200) {
+        navigate();
+      } else {
+        // fail
+        console.log("fail");
+      }
+    },
+    theme: {
+      color: "#61dafb",
+    },
+  };
+
+  const paymentObject = new window.Razorpay(options);
+  paymentObject.open();
+}
+
 const BuyContacts: React.FC = () => {
+  const navigate = useNavigate();
+  const client = useQueryClient();
+  const location = useLocation();
+
   const [quantity, setQuantity] = useState(1);
   const [touched, setTouched] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: AlertColor;
+  }>({ open: false, message: "", severity: "info" });
+
+  const { mutate: pay, isPending: paying } = useMakePayment((data) => {
+    if (!data) return;
+    displayRazorpay(
+      data.amount,
+      data.currency,
+      data.id,
+      () => {
+        client.invalidateQueries({
+          queryKey: ["available-contacts", localStorage.getItem("userId")],
+        });
+        if (location.state?.id) {
+          navigate(`/profile/${location.state.id}`, { replace: true });
+        } else {
+          setSnackbar({
+            open: true,
+            message: "Thank you for your purchasing profile contact(s)",
+            severity: "success",
+          });
+        }
+      },
+      () => {
+        setSnackbar({
+          open: true,
+          message: "Payment failed! Unable to buy profile contacts",
+          severity: "error",
+        });
+      }
+    );
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
@@ -18,17 +141,39 @@ const BuyContacts: React.FC = () => {
   const isValid = quantity > 0 && Number.isInteger(quantity);
 
   return (
-    <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor="#f5f7fa">
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 4, minWidth: 340, maxWidth: 400 }}>
+    <Box
+      minHeight="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      bgcolor="#f5f7fa"
+    >
+      <Paper
+        elevation={3}
+        sx={{ p: 4, borderRadius: 4, minWidth: 340, maxWidth: 400 }}
+      >
         <Typography variant="h5" fontWeight={700} mb={2} align="center">
           Buy Profile Contacts
         </Typography>
-        <Typography variant="body1" color="text.secondary" mb={3} align="center">
-          Each contact unlock allows you to view the email and phone number of one candidate profile.
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          mb={3}
+          align="center"
+        >
+          Each contact unlock allows you to view the email and phone number of
+          one candidate profile.
         </Typography>
         <Divider sx={{ mb: 3 }} />
-        <Typography variant="body2" color="text.secondary" mb={1} align="center" sx={{mb: 3}}>
-          1 profile contact costs <span style={{ color: '#4361EE', fontWeight: 600 }}>₹49</span>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          mb={1}
+          align="center"
+          sx={{ mb: 3 }}
+        >
+          1 profile contact costs{" "}
+          <span style={{ color: "#4361EE", fontWeight: 600 }}>₹49</span>
         </Typography>
         <Box display="flex" flexDirection="column" gap={2}>
           <TextField
@@ -38,20 +183,42 @@ const BuyContacts: React.FC = () => {
             onChange={handleChange}
             onBlur={() => setTouched(true)}
             inputProps={{ min: 1, step: 1 }}
-            error={touched && (!isValid)}
-            helperText={touched && (!isValid) ? 'Please enter a valid number (min 1)' : ' '}
+            sx={{ mb: 2 }}
+            error={touched && !isValid}
+            helperText={
+              touched && !isValid ? "Please enter a valid number (min 1)" : " "
+            }
             fullWidth
           />
-          <Typography variant="subtitle1" fontWeight={500} align="center" sx={{ mt: -4 }}>
-            Total: <span style={{ color: '#4361EE', fontWeight: 700, fontSize: '1.2em' }}>₹{total}</span>
+          <Typography
+            variant="subtitle1"
+            fontWeight={500}
+            align="center"
+            sx={{ mt: -4 }}
+          >
+            Total:{" "}
+            <span
+              style={{ color: "#4361EE", fontWeight: 700, fontSize: "1.2em" }}
+            >
+              ₹{total}
+            </span>
           </Typography>
           <Button
             variant="contained"
             color="primary"
             size="large"
             fullWidth
+            loading={paying}
             disabled={!isValid}
-            sx={{ mt: 1, backgroundColor: '#4361EE', fontWeight: 600, borderRadius: 2 }}
+            onClick={() => {
+              pay({ amount: total, contactCount: quantity });
+            }}
+            sx={{
+              mt: 1,
+              backgroundColor: "#4361EE",
+              fontWeight: 600,
+              borderRadius: 2,
+            }}
           >
             Proceed to Payment
           </Button>
@@ -60,12 +227,26 @@ const BuyContacts: React.FC = () => {
         <Box display="flex" alignItems="flex-start" gap={1}>
           <InfoIcon color="info" sx={{ mt: 0.2 }} />
           <Typography variant="body2" color="text.secondary">
-            You can use purchased contacts at any time. Each unlock gives you access to one candidate's contact details. No subscription required.
+            You can use purchased contacts at any time. Each unlock gives you
+            access to one candidate's contact details. No subscription required.
           </Typography>
         </Box>
       </Paper>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
 
-export default BuyContacts; 
+export default BuyContacts;

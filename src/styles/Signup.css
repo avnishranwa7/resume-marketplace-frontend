@@ -93,6 +93,33 @@
   border-radius: 0;
 }
 
+.terms-checkbox {
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.terms-checkbox input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.terms-checkbox label {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.terms-checkbox a {
+  color: #4361EE;
+  text-decoration: none;
+}
+
+.terms-checkbox a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .signup-container {
     padding: 1rem;

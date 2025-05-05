@@ -7,64 +7,106 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-    const userId = localStorage.getItem('userId') ?? '';
-    const navigate = useNavigate();
-    useEffect(() => {
-      if (localStorage.getItem('role') === 'recruiter') {
-        navigate('/explore', { replace: true });
-      }
-    }, [navigate]);
+  const userId = localStorage.getItem("userId") ?? "";
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (localStorage.getItem("role") === "recruiter") {
+      navigate("/explore", { replace: true });
+    }
+  }, [navigate]);
 
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const [editMode, setEditMode] = useState(false);
   const [editProfile, setEditProfile] = useState<ProfileData | undefined>();
-  const [experienceErrors, setExperienceErrors] = useState<{ company?: string; role?: string; startDate?: string; endDate?: string }[]>([]);
+  const [experienceErrors, setExperienceErrors] = useState<
+    { company?: string; role?: string; startDate?: string; endDate?: string }[]
+  >([]);
 
   const { data: profile, isLoading, error } = useGetProfile(userId, "userId");
-  const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile(() => {
-    queryClient.invalidateQueries({ queryKey: ["profile", userId] });
-    setEditMode(false);
-  });
+  const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile(
+    () => {
+      queryClient.invalidateQueries({ queryKey: ["profile", userId] });
+      setEditMode(false);
+    }
+  );
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
-    setEditProfile(prev => prev ? {
-      ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : name==="immediatelyAvailable" ? value==="true" ? true : false : value
-    } : prev);
+    setEditProfile((prev) =>
+      prev
+        ? {
+            ...prev,
+            [name]:
+              type === "checkbox"
+                ? (e.target as HTMLInputElement).checked
+                : name === "immediatelyAvailable"
+                ? value === "true"
+                  ? true
+                  : false
+                : value,
+          }
+        : prev
+    );
   };
-
-  console.log(editProfile);
 
   const handleSkillsChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEditProfile(prev => prev ? { ...prev, skills: e.target.value.split(",").map(s => s.trim()) } : prev);
+    setEditProfile((prev) =>
+      prev
+        ? { ...prev, skills: e.target.value.split(",").map((s) => s.trim()) }
+        : prev
+    );
   };
 
-  const handleExperienceChange = (idx: number, field: string, value: string | boolean) => {
-    setEditProfile(prev => prev ? {
-      ...prev,
-      experience: prev.experience.map((exp, i) =>
-        i === idx ? { ...exp, [field]: value } : exp
-      )
-    } : prev);
+  const handleExperienceChange = (
+    idx: number,
+    field: string,
+    value: string | boolean
+  ) => {
+    setEditProfile((prev) =>
+      prev
+        ? {
+            ...prev,
+            experience: prev.experience.map((exp, i) =>
+              i === idx ? { ...exp, [field]: value } : exp
+            ),
+          }
+        : prev
+    );
   };
 
   const handleAddExperience = () => {
-    setEditProfile(prev => prev ? {
-      ...prev,
-      experience: [
-        ...prev.experience,
-        { role: '', company: '', startDate: '', endDate: '', currentlyWorking: false, description: '' }
-      ]
-    } : prev);
+    setEditProfile((prev) =>
+      prev
+        ? {
+            ...prev,
+            experience: [
+              ...prev.experience,
+              {
+                role: "",
+                company: "",
+                startDate: "",
+                endDate: "",
+                currentlyWorking: false,
+                description: "",
+              },
+            ],
+          }
+        : prev
+    );
   };
 
   const handleRemoveExperience = (idx: number) => {
-    setEditProfile(prev => prev ? {
-      ...prev,
-      experience: prev.experience.filter((_, i) => i !== idx)
-    } : prev);
+    setEditProfile((prev) =>
+      prev
+        ? {
+            ...prev,
+            experience: prev.experience.filter((_, i) => i !== idx),
+          }
+        : prev
+    );
   };
 
   const handleEdit = () => {
@@ -80,15 +122,25 @@ const Profile = () => {
   const handleSave = () => {
     if (!editProfile) return;
     // Local validation for required fields
-    const errors = editProfile.experience.map(exp => {
-      const err: { company?: string; role?: string; startDate?: string; endDate?: string } = {};
-      if (!exp.company || !exp.company.trim()) err.company = 'Company name is required';
-      if (!exp.role || !exp.role.trim()) err.role = 'Role is required';
-      if (!exp.startDate || !exp.startDate.trim()) err.startDate = 'Start date is required';
-      if (!exp.currentlyWorking && (!exp.endDate || !exp.endDate.trim())) err.endDate = 'End date is required unless currently working';
+    const errors = editProfile.experience.map((exp) => {
+      const err: {
+        company?: string;
+        role?: string;
+        startDate?: string;
+        endDate?: string;
+      } = {};
+      if (!exp.company || !exp.company.trim())
+        err.company = "Company name is required";
+      if (!exp.role || !exp.role.trim()) err.role = "Role is required";
+      if (!exp.startDate || !exp.startDate.trim())
+        err.startDate = "Start date is required";
+      if (!exp.currentlyWorking && (!exp.endDate || !exp.endDate.trim()))
+        err.endDate = "End date is required unless currently working";
       return err;
     });
-    const hasErrors = errors.some(e => e.company || e.role || e.startDate || e.endDate);
+    const hasErrors = errors.some(
+      (e) => e.company || e.role || e.startDate || e.endDate
+    );
     setExperienceErrors(errors);
     if (hasErrors) return;
     updateProfile({ ...editProfile, id: userId });
@@ -133,4 +185,4 @@ const Profile = () => {
   );
 };
 
-export default Profile; 
+export default Profile;

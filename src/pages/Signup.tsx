@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import '../styles/Signup.css';
-import { signup } from '../api/auth';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import "../styles/Signup.css";
+import { signup } from "../api/auth";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Link } from "react-router-dom";
 
 const Signup: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: searchParams.get('role') || 'job_seeker',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: searchParams.get("role") || "job_seeker",
     company: {
-      name: '',
-      website: '',
-      industry: '',
-      size: '',
-      location: ''
-    }
+      name: "",
+      website: "",
+      industry: "",
+      size: "",
+      location: "",
+    },
   });
   const [errors, setErrors] = useState<any>({});
   const [loading, setLoading] = useState(false);
@@ -28,27 +29,29 @@ const Signup: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      navigate('/profile');
+    if (localStorage.getItem("token")) {
+      navigate("/profile");
     }
   }, [navigate]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    if (name.startsWith('company.')) {
-      const companyField = name.split('.')[1];
-      setFormData(prev => ({
+    if (name.startsWith("company.")) {
+      const companyField = name.split(".")[1];
+      setFormData((prev) => ({
         ...prev,
         company: {
           ...prev.company,
-          [companyField]: value
-        }
+          [companyField]: value,
+        },
       }));
       setErrors((prev: any) => ({ ...prev, [name]: undefined }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
       setErrors((prev: any) => ({ ...prev, [name]: undefined }));
     }
@@ -60,18 +63,18 @@ const Signup: React.FC = () => {
     setErrors({});
     try {
       const payload: any = { ...formData };
-      if (payload.role === 'job_seeker' && 'company' in payload) {
+      if (payload.role === "job_seeker" && "company" in payload) {
         delete payload.company;
       }
       await signup(payload);
-      navigate('/activate-account');
+      navigate("/activate-account");
     } catch (err: any) {
       // Parse error response
       const apiErrors = err.response?.data?.data || [];
       const newErrors: any = {};
       apiErrors.forEach((error: any) => {
         if (error && error.path) {
-          if (error.path.startsWith('company.')) {
+          if (error.path.startsWith("company.")) {
             newErrors[error.path] = error.msg;
           } else {
             newErrors[error.path] = error.msg;
@@ -88,7 +91,7 @@ const Signup: React.FC = () => {
     <div className="signup-container">
       <div className="signup-form">
         <h1>Create Your Account</h1>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
@@ -112,14 +115,16 @@ const Signup: React.FC = () => {
               onChange={handleChange}
               required
             />
-            {errors.email && <div className="error-message">{errors.email}</div>}
+            {errors.email && (
+              <div className="error-message">{errors.email}</div>
+            )}
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: "relative" }}>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 value={formData.password}
@@ -132,30 +137,32 @@ const Signup: React.FC = () => {
                 onClick={() => setShowPassword((prev) => !prev)}
                 tabIndex={-1}
                 style={{
-                  position: 'absolute',
-                  right: '0.75rem',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#4361EE',
-                  fontSize: '1rem',
-                  padding: 0
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#4361EE",
+                  fontSize: "1rem",
+                  padding: 0,
                 }}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </button>
             </div>
-            {errors.password && <div className="error-message">{errors.password}</div>}
+            {errors.password && (
+              <div className="error-message">{errors.password}</div>
+            )}
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: "relative" }}>
               <input
-                type={showConfirmPassword ? 'text' : 'password'}
+                type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
                 name="confirmPassword"
                 value={formData.confirmPassword}
@@ -168,23 +175,27 @@ const Signup: React.FC = () => {
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
                 tabIndex={-1}
                 style={{
-                  position: 'absolute',
-                  right: '0.75rem',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#4361EE',
-                  fontSize: '1rem',
-                  padding: 0
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#4361EE",
+                  fontSize: "1rem",
+                  padding: 0,
                 }}
-                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                aria-label={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
               >
                 {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
               </button>
             </div>
-            {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
+            {errors.confirmPassword && (
+              <div className="error-message">{errors.confirmPassword}</div>
+            )}
           </div>
 
           <div className="form-group">
@@ -201,7 +212,17 @@ const Signup: React.FC = () => {
             </select>
           </div>
 
-          {formData.role === 'recruiter' && (
+          <div className="terms-checkbox">
+            <input type="checkbox" id="terms" required />
+            <label htmlFor="terms">
+              I agree to the{" "}
+              <Link to="/terms" target="_blank">
+                Terms and Conditions
+              </Link>
+            </label>
+          </div>
+
+          {formData.role === "recruiter" && (
             <>
               <div className="form-group">
                 <label htmlFor="company.name">Company Name</label>
@@ -212,7 +233,9 @@ const Signup: React.FC = () => {
                   value={formData.company.name}
                   onChange={handleChange}
                 />
-                {errors['company.name'] && <div className="error-message">{errors['company.name']}</div>}
+                {errors["company.name"] && (
+                  <div className="error-message">{errors["company.name"]}</div>
+                )}
               </div>
 
               <div className="form-group">
@@ -224,7 +247,11 @@ const Signup: React.FC = () => {
                   value={formData.company.website}
                   onChange={handleChange}
                 />
-                {errors['company.website'] && <div className="error-message">{errors['company.website']}</div>}
+                {errors["company.website"] && (
+                  <div className="error-message">
+                    {errors["company.website"]}
+                  </div>
+                )}
               </div>
 
               <div className="form-group">
@@ -236,7 +263,11 @@ const Signup: React.FC = () => {
                   value={formData.company.industry}
                   onChange={handleChange}
                 />
-                {errors['company.industry'] && <div className="error-message">{errors['company.industry']}</div>}
+                {errors["company.industry"] && (
+                  <div className="error-message">
+                    {errors["company.industry"]}
+                  </div>
+                )}
               </div>
 
               <div className="form-group">
@@ -255,7 +286,9 @@ const Signup: React.FC = () => {
                   <option value="501-1000">501-1000 employees</option>
                   <option value="1000+">1000+ employees</option>
                 </select>
-                {errors['company.size'] && <div className="error-message">{errors['company.size']}</div>}
+                {errors["company.size"] && (
+                  <div className="error-message">{errors["company.size"]}</div>
+                )}
               </div>
 
               <div className="form-group">
@@ -267,22 +300,27 @@ const Signup: React.FC = () => {
                   value={formData.company.location}
                   onChange={handleChange}
                 />
-                {errors['company.location'] && <div className="error-message">{errors['company.location']}</div>}
+                {errors["company.location"] && (
+                  <div className="error-message">
+                    {errors["company.location"]}
+                  </div>
+                )}
               </div>
             </>
           )}
 
           <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'Creating...' : 'Create Account'}
+            {loading ? "Creating..." : "Create Account"}
           </button>
         </form>
 
         <p className="login-link">
-          Already have an account? <span onClick={() => navigate('/login')}>Login</span>
+          Already have an account?{" "}
+          <span onClick={() => navigate("/login")}>Login</span>
         </p>
       </div>
     </div>
   );
 };
 
-export default Signup; 
+export default Signup;
