@@ -65,7 +65,7 @@ async function displayRazorpay(
         }
       },
     },
-    handler: async function (response) {
+    handler: async function (response: any) {
       const res = await axiosInstance.post("/verify-payment", {
         orderId,
         userId: localStorage.getItem("userId"),
