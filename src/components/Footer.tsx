@@ -22,6 +22,9 @@ const Footer: React.FC = () => {
             <li>
               <Link to="/pricing">Pricing</Link>
             </li>
+            <li>
+              <Link to="/contact">Contact Us</Link>
+            </li>
           </ul>
         </div>
         <div className="footer-section">
@@ -37,7 +40,7 @@ const Footer: React.FC = () => {
         </div>
         <div className="footer-section">
           <h3>Contact</h3>
-          <p>Email: support@resumemarketplace.com</p>
+          <p>Email: avnishranwa7@gmail.com</p>
           <p>
             Address: 42, Pratap Nagar, Ext-B, Murlipura Jaipur RAJASTHAN 302013
           </p>

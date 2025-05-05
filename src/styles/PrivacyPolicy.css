@@ -1,0 +1,97 @@
+.privacy-container {
+  min-height: 100vh;
+  padding: 6rem 2rem 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.privacy-content {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.privacy-content h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.last-updated {
+  color: #666;
+  text-align: center;
+  margin-bottom: 3rem;
+  font-style: italic;
+}
+
+.privacy-content section {
+  margin-bottom: 2.5rem;
+}
+
+.privacy-content h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #4361EE;
+}
+
+.privacy-content h3 {
+  color: #2c3e50;
+  font-size: 1.4rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.privacy-content p {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.privacy-content ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.privacy-content li {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.contact-info {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.contact-info p {
+  margin: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .privacy-container {
+    padding: 5rem 1rem 1rem;
+  }
+
+  .privacy-content {
+    padding: 2rem;
+  }
+
+  .privacy-content h1 {
+    font-size: 2rem;
+  }
+
+  .privacy-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .privacy-content h3 {
+    font-size: 1.2rem;
+  }
+} 

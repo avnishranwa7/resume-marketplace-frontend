@@ -244,4 +244,17 @@
 
 .logout-modal-actions .cancel-btn:hover {
   background: #e2e8f0;
+}
+
+.buy-contacts-btn {
+  background-color: #4361EE;
+  color: white !important;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.buy-contacts-btn:hover {
+  background-color: #3730a3;
 } 

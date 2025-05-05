@@ -10,6 +10,8 @@ import Explore from "./pages/Explore";
 import Pricing from "./pages/Pricing";
 import ProfileView from "./pages/ProfileView";
 import TermsAndConditions from "./pages/TermsAndConditions";
+import ContactUs from "./pages/ContactUs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import "./App.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ActivateAccount from "./pages/ActivateAccount";
@@ -49,9 +51,17 @@ const App: React.FC = () => {
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/profile/:id" element={<ProfileView />} />
-                <Route path="/buy-contacts" element={<BuyContacts />} />
+                <Route
+                  path="/buy-contacts"
+                  element={
+                    <ProtectedRoute>
+                      <BuyContacts />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/terms" element={<TermsAndConditions />} />
-                {/* Add more routes as we create more pages */}
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
               </Routes>
             </main>
             <Footer />
