@@ -1,24 +1,133 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { UploadIcon, DiscoverIcon, HiredIcon } from '../assets/icons';
 import { avatars } from '../assets/avatars';
 import '../styles/Home.css';
+import { MenuItem, Select, Checkbox, ListItemText, Divider } from '@mui/material';
+import Radio from '@mui/material/Radio';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useState({
+  const location = useLocation();
+  const [filters, setFilters] = useState({
+    role: '',
     keyword: '',
     yoe: '',
-    tags: '',
-    city: '',
-    state: '',
-    country: ''
+    noticePeriod: '',
+    immediatelyAvailable: false,
   });
+  const [touched, setTouched] = useState(false);
+
+  const allRoles = [
+    'Frontend Developer',
+    'Backend Developer',
+    'Full Stack Developer',
+    'Data Scientist',
+    'Product Manager',
+    'UI/UX Designer',
+    'DevOps Engineer',
+    'QA Engineer',
+    'Mobile Developer',
+    'Project Manager',
+    'Business Analyst',
+    'Software Developer',
+  ];
+
+  // On mount, read filters from URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setFilters(prev => ({
+      ...prev,
+      role: params.get('role') || '',
+      keyword: params.get('keyword') || '',
+      yoe: params.get('yoe') || '',
+      noticePeriod: params.get('noticePeriod') || '',
+      immediatelyAvailable: params.get('immediatelyAvailable') === 'true',
+    }));
+  }, [location.search]);
+
+  // On filter change, update URL
+  const updateUrlParams = (newFilters: typeof filters) => {
+    const params = new URLSearchParams();
+    if (newFilters.role) params.set('role', newFilters.role);
+    if (newFilters.keyword) params.set('keyword', newFilters.keyword);
+    if (newFilters.yoe) params.set('yoe', newFilters.yoe);
+    if (newFilters.noticePeriod) params.set('noticePeriod', newFilters.noticePeriod);
+    if (newFilters.immediatelyAvailable) params.set('immediatelyAvailable', 'true');
+    navigate({ pathname: '/', search: params.toString() }, { replace: true });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters(prev => {
+      const updated = { ...prev, [name]: value };
+      updateUrlParams(updated);
+      return updated;
+    });
+    setTouched(true);
+  };
+
+  // Handler for the custom notice period dropdown
+  const handleNoticePeriodDropdownChange = (event: any) => {
+    const value = event.target.value;
+    const noticePeriodOptions = ['', '15', '30', '60', '90'];
+    if (Array.isArray(value)) {
+      const hasImmediate = value.includes('immediate');
+      const lastSelected = value[value.length - 1];
+      if (noticePeriodOptions.includes(lastSelected)) {
+        setFilters(prev => {
+          const updated = {
+            ...prev,
+            immediatelyAvailable: hasImmediate,
+            noticePeriod: lastSelected,
+          };
+          updateUrlParams(updated);
+          return updated;
+        });
+      } else {
+        setFilters(prev => {
+          const updated = {
+            ...prev,
+            immediatelyAvailable: hasImmediate,
+          };
+          updateUrlParams(updated);
+          return updated;
+        });
+      }
+    } else {
+      setFilters(prev => {
+        const updated = { ...prev, noticePeriod: value };
+        updateUrlParams(updated);
+        return updated;
+      });
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement search logic
-    console.log('Search:', searchParams);
+    if (!filters.role) {
+      setTouched(true);
+      return;
+    }
+    const params = new URLSearchParams();
+    params.set('role', filters.role);
+    if (filters.keyword) params.set('keyword', filters.keyword);
+    if (filters.yoe) params.set('yoe', filters.yoe);
+    if (filters.noticePeriod) params.set('noticePeriod', filters.noticePeriod);
+    if (filters.immediatelyAvailable) params.set('immediatelyAvailable', 'true');
+    navigate(`/explore?${params.toString()}`);
+  };
+
+  const handleReset = () => {
+    setFilters({
+      role: '',
+      keyword: '',
+      yoe: '',
+      noticePeriod: '',
+      immediatelyAvailable: false,
+    });
+    setTouched(false);
+    navigate({ pathname: '/' }, { replace: true });
   };
 
   const featuredResumes = [
@@ -61,6 +170,19 @@ const Home: React.FC = () => {
     'UI/UX', 'Marketing', 'Azure'
   ];
 
+  // Compose the value for the Select component
+  const noticePeriodSelectValue: string[] = [];
+  if (filters.immediatelyAvailable) {
+    noticePeriodSelectValue.push('immediate');
+  }
+  if (
+    typeof filters.noticePeriod === 'string' &&
+    filters.noticePeriod !== '' &&
+    filters.noticePeriod !== 'immediate'
+  ) {
+    noticePeriodSelectValue.push(filters.noticePeriod);
+  }
+
   return (
     <div className="home-container">
       {/* Hero Section */}
@@ -72,48 +194,89 @@ const Home: React.FC = () => {
           {/* Search Form */}
           <form className="search-form" onSubmit={handleSearch}>
             <div className="search-inputs">
+              <select
+                name="role"
+                value={filters.role}
+                onChange={handleChange}
+                required
+                className={touched && !filters.role ? 'input-error' : ''}
+              >
+                <option value="" disabled>Select a role</option>
+                {allRoles.map(role => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </select>
               <input
                 type="text"
                 placeholder="Keyword"
-                value={searchParams.keyword}
-                onChange={(e) => setSearchParams(prev => ({ ...prev, keyword: e.target.value }))}
+                value={filters.keyword}
+                onChange={handleChange}
+                name="keyword"
               />
               <select
-                value={searchParams.yoe}
-                onChange={(e) => setSearchParams(prev => ({ ...prev, yoe: e.target.value }))}
+                value={filters.yoe}
+                onChange={handleChange}
+                name="yoe"
               >
                 <option value="">YOE</option>
-                <option value="0-2">0-2 years</option>
-                <option value="3-5">3-5 years</option>
-                <option value="5+">5+ years</option>
+                {[1,2,3,4,5,6,7,8,9,10].map(y => (
+                  <option key={y} value={y}>{y} Years</option>
+                ))}
               </select>
-              <input
-                type="text"
-                placeholder="Tags"
-                value={searchParams.tags}
-                onChange={(e) => setSearchParams(prev => ({ ...prev, tags: e.target.value }))}
-              />
-              <input
-                type="text"
-                placeholder="City"
-                value={searchParams.city}
-                onChange={(e) => setSearchParams(prev => ({ ...prev, city: e.target.value }))}
-              />
-              <select
-                value={searchParams.state}
-                onChange={(e) => setSearchParams(prev => ({ ...prev, state: e.target.value }))}
+              <Select
+                id="noticePeriod"
+                name="noticePeriod"
+                multiple
+                value={noticePeriodSelectValue}
+                onChange={handleNoticePeriodDropdownChange}
+                renderValue={(selected) => {
+                  if (!selected.length) return 'Select notice period';
+                  const labels = [];
+                  if (selected.includes('immediate')) labels.push('Immediately Available');
+                  const period = (selected as string[]).find((v: string) => v !== 'immediate');
+                  if (period === '') labels.push('Any');
+                  else if (period) labels.push(`${period} days`);
+                  return labels.join(', ');
+                }}
+                displayEmpty
+                size="small"
+                sx={{
+                  minHeight: '40px',
+                  height: '40px',
+                  fontSize: '1rem',
+                  '.MuiSelect-select': { padding: '10px 14px' },
+                  background: '#fff',
+                  borderRadius: '4px',
+                }}
               >
-                <option value="">State</option>
-                {/* Add state options */}
-              </select>
-              <select
-                value={searchParams.country}
-                onChange={(e) => setSearchParams(prev => ({ ...prev, country: e.target.value }))}
-              >
-                <option value="">Country</option>
-                {/* Add country options */}
-              </select>
+                <MenuItem value="immediate" dense>
+                  <Checkbox checked={filters.immediatelyAvailable} size="small" />
+                  <ListItemText primary="Immediately Available" />
+                </MenuItem>
+                <Divider />
+                <MenuItem value="" dense>
+                  <Radio checked={filters.noticePeriod === ''} size="small" />
+                  <ListItemText primary="Any" />
+                </MenuItem>
+                <MenuItem value="15" dense>
+                  <Radio checked={filters.noticePeriod === '15'} size="small" />
+                  <ListItemText primary="15 days" />
+                </MenuItem>
+                <MenuItem value="30" dense>
+                  <Radio checked={filters.noticePeriod === '30'} size="small" />
+                  <ListItemText primary="30 days" />
+                </MenuItem>
+                <MenuItem value="60" dense>
+                  <Radio checked={filters.noticePeriod === '60'} size="small" />
+                  <ListItemText primary="60 days" />
+                </MenuItem>
+                <MenuItem value="90" dense>
+                  <Radio checked={filters.noticePeriod === '90'} size="small" />
+                  <ListItemText primary="90 days" />
+                </MenuItem>
+              </Select>
               <button type="submit" className="search-btn">Search</button>
+              <button type="button" className="search-btn" style={{ background: '#e2e8f0', color: '#222b45', marginLeft: 8 }} onClick={handleReset}>Reset</button>
             </div>
           </form>
         </div>
@@ -181,7 +344,7 @@ const Home: React.FC = () => {
         <h2>Popular Tags</h2>
         <div className="tags">
           {popularTags.map((tag, index) => (
-            <button key={index} className="tag" onClick={() => setSearchParams(prev => ({ ...prev, tags: tag }))}>
+            <button key={index} className="tag" onClick={() => setFilters(prev => ({ ...prev, tags: tag }))}>
               {tag}
             </button>
           ))}

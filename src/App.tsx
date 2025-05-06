@@ -20,6 +20,7 @@ import CompleteVerification from "./pages/CompleteVerification";
 import BuyContacts from "./pages/BuyContacts";
 import ShippingAndDelivery from './pages/ShippingAndDelivery';
 import CancellationAndRefund from './pages/CancellationAndRefund';
+import ScrollToTop from './components/ScrollToTop';
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -29,6 +30,7 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
+        <ScrollToTop />
         <AuthProvider>
           <div className="app">
             <Navbar />
