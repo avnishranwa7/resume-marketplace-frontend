@@ -126,13 +126,27 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               onChange={onChange}
               placeholder="Name"
             />
-            <input
+            <select
               className={styles.editInput}
               name="role"
               value={editProfile.role}
-              onChange={onChange}
-              placeholder="Role"
-            />
+              onChange={e => onChange(e as unknown as React.ChangeEvent<HTMLInputElement>)}
+              style={{ marginBottom: '0.5rem', maxWidth: 340, width: '100%', display: 'block' }}
+            >
+              <option value="">Select role</option>
+              <option value="Frontend Developer">Frontend Developer</option>
+              <option value="Backend Developer">Backend Developer</option>
+              <option value="Full Stack Developer">Full Stack Developer</option>
+              <option value="Data Scientist">Data Scientist</option>
+              <option value="Product Manager">Product Manager</option>
+              <option value="UI/UX Designer">UI/UX Designer</option>
+              <option value="DevOps Engineer">DevOps Engineer</option>
+              <option value="QA Engineer">QA Engineer</option>
+              <option value="Mobile Developer">Mobile Developer</option>
+              <option value="Project Manager">Project Manager</option>
+              <option value="Business Analyst">Business Analyst</option>
+              <option value="Software Developer">Software Developer</option>
+            </select>
             {/* Notice Period Select */}
             <div className={styles.editRow}>
               <select
