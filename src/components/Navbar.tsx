@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
           <img
             src="/favicon.svg"
             alt="Resume Marketplace Logo"
-            style={{ height: 32, width: 32, marginRight: 10 }}
+            className="navbar-logo-img"
           />
           <span className="logo-text">RESUME</span>
           <span className="logo-text marketplace">MARKETPLACE</span>

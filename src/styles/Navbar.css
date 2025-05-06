@@ -41,6 +41,29 @@
   color: #4361ee;
 }
 
+.navbar-logo-img {
+  height: 32px;
+  width: 32px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  transition: height 0.2s, width 0.2s;
+}
+
+@media (max-width: 600px) {
+  .navbar-logo-img {
+    height: 24px;
+    width: 24px;
+    margin-right: 7px;
+  }
+  .logo-text {
+    font-size: 1rem;
+    letter-spacing: 0.2px;
+  }
+  .logo-text.marketplace {
+    font-size: 1rem;
+  }
+}
+
 .navbar-menu {
   display: flex;
   align-items: center;
