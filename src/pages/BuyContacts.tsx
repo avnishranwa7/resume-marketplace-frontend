@@ -48,7 +48,7 @@ async function displayRazorpay(
   }
 
   const options = {
-    key: "rzp_test_NI5OMd7KXnThWH",
+    key: import.meta.env.VITE_RAZORPAY_ID,
     amount: amount.toString(),
     currency,
     name: "Resume Marketplace",
