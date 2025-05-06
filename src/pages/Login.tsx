@@ -54,7 +54,11 @@ const Login: React.FC = () => {
         }
         setSuccess('Successfully logged in! Redirecting...');
         setTimeout(() => {
-          navigate('/explore');
+          if (data.role === 'job_seeker') {
+            navigate('/profile');
+          } else {
+            navigate('/explore');
+          }
         }, 1000);
       } else {
         setError(data.message || 'Login failed.');
