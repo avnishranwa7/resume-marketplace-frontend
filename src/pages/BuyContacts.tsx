@@ -16,6 +16,7 @@ import {
 import { useMakePayment } from "../queries/payment";
 import axiosInstance from "../api/axiosInstance";
 import { useQueryClient } from "@tanstack/react-query";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const PRICE_PER_CONTACT = 49;
 
@@ -89,6 +90,8 @@ async function displayRazorpay(
 }
 
 const BuyContacts: React.FC = () => {
+  useDocumentTitle('Buy Contact Access');
+  
   const navigate = useNavigate();
   const client = useQueryClient();
   const location = useLocation();

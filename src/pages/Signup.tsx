@@ -5,8 +5,11 @@ import { signup } from "../api/auth";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Link } from "react-router-dom";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const Signup: React.FC = () => {
+  useDocumentTitle('Sign Up');
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

@@ -5,8 +5,11 @@ import { avatars } from '../assets/avatars';
 import '../styles/Home.css';
 import { MenuItem, Select, Checkbox, ListItemText, Divider } from '@mui/material';
 import Radio from '@mui/material/Radio';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const Home: React.FC = () => {
+  useDocumentTitle('Home');
+
   const navigate = useNavigate();
   const location = useLocation();
   const [filters, setFilters] = useState({

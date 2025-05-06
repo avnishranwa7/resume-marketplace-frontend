@@ -33,6 +33,11 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
+          <img
+            src="/favicon.svg"
+            alt="Resume Marketplace Logo"
+            style={{ height: 32, width: 32, marginRight: 10 }}
+          />
           <span className="logo-text">RESUME</span>
           <span className="logo-text marketplace">MARKETPLACE</span>
         </Link>

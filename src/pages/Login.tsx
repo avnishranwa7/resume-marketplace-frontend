@@ -5,6 +5,7 @@ import { login } from '../api/auth';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useAuth } from '../context/AuthContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const Login: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+
+  useDocumentTitle('Login');
 
   useEffect(() => {
     if (localStorage.getItem('token')) {

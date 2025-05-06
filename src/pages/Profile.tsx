@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, ChangeEvent, useEffect } from "react";
 import styles from "./Profile.module.css";
 import ProfileCard from "../components/ProfileCard";
@@ -5,8 +6,11 @@ import { useGetProfile, useUpdateProfile } from "../queries/profile";
 import { ProfileData } from "../types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
-const Profile = () => {
+const Profile: React.FC = () => {
+  useDocumentTitle('My Profile');
+
   const userId = localStorage.getItem("userId") ?? "";
   const navigate = useNavigate();
   useEffect(() => {

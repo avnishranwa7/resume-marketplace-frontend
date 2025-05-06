@@ -1,7 +1,10 @@
 import React from "react";
 import "../styles/PrivacyPolicy.css";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const CancellationAndRefund: React.FC = () => {
+  useDocumentTitle('Cancellation & Refund');
+
   return (
     <div className="privacy-container">
       <div className="privacy-content">

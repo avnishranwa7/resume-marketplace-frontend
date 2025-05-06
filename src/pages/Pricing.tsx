@@ -1,10 +1,14 @@
+import React from 'react';
 import styles from "./Pricing.module.css";
 import Button from "@mui/material/Button";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useNavigate } from "react-router-dom";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
-const Pricing = () => {
+const Pricing: React.FC = () => {
+  useDocumentTitle('Pricing');
+
   const navigate = useNavigate();
 
   return (

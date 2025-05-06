@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "../styles/ContactUs.css";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const ContactUs: React.FC = () => {
+  useDocumentTitle('Contact Us');
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",

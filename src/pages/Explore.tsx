@@ -14,6 +14,7 @@ import {
   ListItemText,
   Radio,
 } from "@mui/material";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const mockProfiles = [
   {
@@ -150,6 +151,8 @@ const formatExperience = (years: number, months: number): string => {
 };
 
 const Explore = () => {
+  useDocumentTitle('Explore Profiles');
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
     keyword: "",

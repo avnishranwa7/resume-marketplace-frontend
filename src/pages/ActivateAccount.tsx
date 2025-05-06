@@ -1,6 +1,9 @@
 import React from 'react';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const ActivateAccount: React.FC = () => {
+  useDocumentTitle('Activate Account');
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
       <div style={{ background: 'white', padding: '2.5rem 2rem', borderRadius: '12px', boxShadow: '0 4px 16px rgba(67,97,238,0.10)', maxWidth: 400, width: '100%', textAlign: 'center' }}>

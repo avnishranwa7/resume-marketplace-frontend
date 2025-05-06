@@ -1,7 +1,10 @@
 import React from "react";
 import "../styles/TermsAndConditions.css";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const TermsAndConditions: React.FC = () => {
+  useDocumentTitle('Terms & Conditions');
+
   return (
     <div className="privacy-container">
       <div className="privacy-content">

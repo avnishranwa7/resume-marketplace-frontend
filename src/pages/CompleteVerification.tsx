@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import baseUrl from '../api/baseUrl';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const CompleteVerification: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Verifying your account...');
+
+  useDocumentTitle('Complete Verification');
 
   useEffect(() => {
     const token = searchParams.get('token');

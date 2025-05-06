@@ -1,7 +1,10 @@
 import React from "react";
 import "../styles/PrivacyPolicy.css";
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const ShippingAndDelivery: React.FC = () => {
+  useDocumentTitle('Shipping & Delivery');
+
   return (
     <div className="privacy-container">
       <div className="privacy-content">
