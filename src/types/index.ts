@@ -22,12 +22,13 @@ export interface Profile {
 }
 
 export interface Education {
-  institution: string;
+  college: string;
   degree: string;
-  field: string;
-  startYear: number;
-  endYear: number;
-  grade: string;
+  startDate: string;
+  endDate?: string;
+  ongoing?: boolean;
+  grade?: string;
+  currentlyStudying?: boolean;
 }
 
 export interface Experience {
@@ -54,9 +55,11 @@ export interface ProfileData {
   role: string;
   about: string;
   experience: Experience[];
+  education: Education[];
   skills: string[];
   phone?: string;
   yearsOfExperience?: number;
   immediatelyAvailable?: boolean;
   noticePeriod?: number;
+  resumeLink?: string;
 }

@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { ProfileData } from "../types";
-import { Response } from "../types/responses";
+import { ParsedResume, Response } from "../types/responses";
 import axiosInstance from "./axiosInstance";
 import { UpdateProfileRequest } from "../types/requests";
 
@@ -32,4 +32,8 @@ export async function getAvailableContacts(
   id: string
 ): Promise<AxiosResponse<Response<number>>> {
   return axiosInstance.get(`/available-contacts?id=${id}`);
+}
+
+export async function parseResume(fileId: string): Promise<AxiosResponse<Response<ParsedResume>>> {
+  return axiosInstance.post("/parse-resume", { fileId });
 }

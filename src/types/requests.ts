@@ -8,4 +8,5 @@ export interface UpdateProfileRequest {
   about: string;
   experience: Experience[];
   skills: string[];
+  education: any[];
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../pages/Profile.module.css';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
@@ -15,6 +15,13 @@ import { ProfileData } from '../types';
 import EmailIcon from '@mui/icons-material/Email';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import GoogleIcon from '@mui/icons-material/Google';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import axiosInstance from '../api/axiosInstance';
+import { useParseResume } from '../queries/profile';
+import { Alert, AlertColor, Snackbar } from '@mui/material';
+import SchoolIcon from '@mui/icons-material/School';
 
 interface ProfileCardProps {
   profile: ProfileData;
@@ -30,6 +37,11 @@ interface ProfileCardProps {
   onRemoveExperience?: (idx: number) => void;
   isUpdating?: boolean;
   experienceErrors?: { company?: string; role?: string; startDate?: string; endDate?: string }[];
+  educationErrors?: { college?: string; degree?: string; startDate?: string; endDate?: string }[];
+  onAutofill?: (parsed: any) => void;
+  onEducationChange?: (idx: number, field: string, value: string | boolean) => void;
+  onAddEducation?: () => void;
+  onRemoveEducation?: (idx: number) => void;
 }
 
 function stringToColor(str: string) {
@@ -43,6 +55,13 @@ function stringToColor(str: string) {
     color += ('00' + value.toString(16)).slice(-2);
   }
   return color;
+}
+
+function extractGoogleDriveFileId(url: string) {
+  const regex = /\/d\/([^\/]+)|[?&]id=([^&]+)/;
+  const match = url.match(regex);
+  
+  return match ? (match[1] || match[2]) : null;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -59,7 +78,27 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   onRemoveExperience,
   isUpdating,
   experienceErrors,
+  educationErrors,
+  onAutofill,
+  onEducationChange,
+  onAddEducation,
+  onRemoveEducation,
 }) => {
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: AlertColor;
+  }>({ open: false, message: "", severity: "info" });
+
+  const {mutate: parse, isPending: parsing} = useParseResume((data) => {
+    if (data) {
+      if (onAutofill) onAutofill(data);
+      setSnackbar({open: true, message: "Resume parsed successfully", severity: "success"})
+    }
+  }, (err) => {
+    setSnackbar({open: true, message: err, severity: "error"})
+  });
+
   useEffect(() => {
     if (editMode) {
       const textareas = document.querySelectorAll<HTMLTextAreaElement>(`.${styles.editTextarea}`);
@@ -190,6 +229,67 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         )}
         {!editMode && profile.email && <p className={styles.email}><EmailIcon sx={{ color: '#4361EE', fontSize: 18, verticalAlign: 'middle', marginRight: 0.5 }} />{profile.email}</p>}
         {!editMode && profile.role && <p className={styles.email}><BusinessCenterIcon sx={{ color: '#6c7a89', fontSize: 18, verticalAlign: 'middle', marginRight: 0.5 }} />{profile.role}</p>}
+        {/* Resume Link Input - Improved UI */}
+        {editMode && editProfile && onChange && (
+          <div style={{ marginBottom: '2rem', marginTop: '2.5rem', maxWidth: 340, width: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
+            <label style={{ display: 'flex', alignItems: 'center', fontWeight: 500, color: '#4361EE', marginBottom: 2 }}>
+              <InsertDriveFileIcon sx={{ color: '#4361EE', fontSize: 20, marginRight: 1 }} />
+              Google Drive Resume Link
+            </label>
+            <div style={{ position: 'relative', marginBottom: 2 }}>
+              <GoogleIcon sx={{ color: '#EA4335', fontSize: 22, position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 2 }} />
+              <input
+                className={styles.editInput}
+                name="resumeLink"
+                value={editProfile.resumeLink || ''}
+                onChange={onChange}
+                placeholder="Paste your Google Drive link"
+                type="url"
+                pattern="https://.*"
+                style={{ width: '100%', paddingLeft: 40 }}
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={()=>parse(extractGoogleDriveFileId(editProfile.resumeLink ?? "") ?? "")}
+                disabled={parsing || !editProfile.resumeLink || !/^https:\/\/.+/.test(editProfile.resumeLink)}
+                style={{
+                  background: '#4361EE',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 6,
+                  padding: '0.5rem 1rem',
+                  fontWeight: 600,
+                  cursor: parsing ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: '0.98rem',
+                  minWidth: 120,
+                  marginTop: 10
+                }}
+              >
+                {parsing ? <CircularProgress size={18} color="inherit" /> : <AutoFixHighIcon sx={{ fontSize: 18, marginRight: 1 }} />}
+                {parsing ? 'Parsing...' : 'Parse Resume'}
+              </button>
+            </div>
+            <div style={{ fontSize: '0.92rem', color: '#6c7a89', marginTop: 2 }}>
+              Make sure your Drive link is set to "Anyone with the link can view".
+              <div style={{ color: '#d32f2f', fontWeight: 500, marginTop: 4 }}>Only PDF files are allowed.</div>
+            </div>
+          </div>
+        )}
+        {/* Resume Link Display - Improved UI */}
+        {!editMode && profile.resumeLink && (
+          <div style={{ margin: '0.5rem 0 0.5rem 0', textAlign: 'center' }}>
+            <a href={profile.resumeLink} target="_blank" rel="noopener noreferrer" style={{ color: '#4361EE', textDecoration: 'underline', fontSize: '1.05rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
+              <InsertDriveFileIcon sx={{ color: '#4361EE', fontSize: 20, marginRight: 2 }} />
+              <GoogleIcon sx={{ color: '#EA4335', fontSize: 20, marginRight: 6 }} />
+              View Resume (Google Drive)
+            </a>
+          </div>
+        )}
         {/* Show notice period and/or immediately available in non-editable mode */}
         {!editMode && (
           <>
@@ -358,6 +458,128 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           )
         )}
       </div>
+      {/* Education Section */}
+      <div className={styles.expSection}>
+        <h3>Education</h3>
+        {editMode && editProfile && onEducationChange && onAddEducation && onRemoveEducation ? (
+          <>
+            {editProfile.education.map((edu, idx) => (
+              <div key={idx} className={styles.expEditCard}>
+                <div className={styles.expEditRow}>
+                  <div className={styles.inputGroup} style={{ maxWidth: '340px' }}>
+                    <input
+                      className={styles.editInput + (educationErrors && educationErrors[idx]?.college ? ' ' + styles.inputError : '')}
+                      placeholder="College"
+                      value={edu.college}
+                      onChange={e => onEducationChange(idx, 'college', e.target.value)}
+                    />
+                    {educationErrors && educationErrors[idx]?.college && (
+                      <div className={styles.fieldError}>{educationErrors[idx].college}</div>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup} style={{ maxWidth: '340px' }}>
+                    <input
+                      className={styles.editInput + (educationErrors && educationErrors[idx]?.degree ? ' ' + styles.inputError : '')}
+                      placeholder="Degree"
+                      value={edu.degree}
+                      onChange={e => onEducationChange(idx, 'degree', e.target.value)}
+                    />
+                    {educationErrors && educationErrors[idx]?.degree && (
+                      <div className={styles.fieldError}>{educationErrors[idx].degree}</div>
+                    )}
+                  </div>
+                  <div className={styles.expDateGroup}>
+                    <div className={styles.inputGroup + ' ' + styles.expDateRow}>
+                      <label className={styles.expDateLabel}>Start Date</label>
+                      <input
+                        className={styles.editInput + (educationErrors && educationErrors[idx]?.startDate ? ' ' + styles.inputError : '')}
+                        type="date"
+                        value={edu.startDate}
+                        onChange={e => onEducationChange(idx, 'startDate', e.target.value)}
+                      />
+                      {educationErrors && educationErrors[idx]?.startDate && (
+                        <div className={styles.fieldError}>{educationErrors[idx].startDate}</div>
+                      )}
+                    </div>
+                    <div className={styles.inputGroup + ' ' + styles.expDateRow}>
+                      <label className={styles.expDateLabel}>End Date</label>
+                      <input
+                        className={styles.editInput + (educationErrors && educationErrors[idx]?.endDate ? ' ' + styles.inputError : '')}
+                        type="date"
+                        value={edu.endDate}
+                        onChange={e => onEducationChange(idx, 'endDate', e.target.value)}
+                        disabled={edu.ongoing || edu.currentlyStudying}
+                      />
+                      {(edu.ongoing || edu.currentlyStudying) && (
+                        <div style={{ color: '#059669', fontWeight: 500, marginTop: 4 }}>Present</div>
+                      )}
+                      {educationErrors && educationErrors[idx]?.endDate && (
+                        <div className={styles.fieldError}>{educationErrors[idx].endDate}</div>
+                      )}
+                    </div>
+                  </div>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={!!(edu.ongoing || edu.currentlyStudying)}
+                        onChange={e => onEducationChange(idx, 'ongoing', e.target.checked)}
+                        color="primary"
+                      />
+                    }
+                    label="Currently studying"
+                    className={styles.expCheckboxLabel}
+                  />
+                </div>
+                <div className={styles.expEditRow}>
+                  <input
+                    className={styles.editInput}
+                    placeholder="Grade (e.g. 8.5 CGPA)"
+                    value={edu.grade}
+                    onChange={e => onEducationChange(idx, 'grade', e.target.value)}
+                  />
+                </div>
+                <div className={styles.expRemoveBtnRow}>
+                  <IconButton 
+                    aria-label="remove education"
+                    onClick={() => onRemoveEducation(idx)}
+                    className={styles.expRemoveBtn}
+                    size="small"
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </div>
+              </div>
+            ))}
+            <Button 
+              variant="outlined" 
+              onClick={onAddEducation} 
+              className={styles.addExpBtn}
+              sx={{ marginTop: '0.5rem', color: '#4361EE', borderColor: '#4361EE', fontWeight: 600, width: '100%' }}
+            >
+              + Add Education
+            </Button>
+          </>
+        ) : (
+          profile.education && profile.education.length > 0 ? (
+            profile.education.map((edu, idx) => (
+              <div key={idx} className={styles.expViewCard}>
+                <div className={styles.expViewHeader}>
+                  <span className={styles.expViewRole}>{edu.degree}</span>
+                  <span className={styles.expViewCompany}><SchoolIcon sx={{ fontSize: 18, verticalAlign: 'middle', color: '#6c7a89', marginRight: 4 }} />{edu.college}</span>
+                </div>
+                <div className={styles.expViewDates}><CalendarMonthIcon sx={{ fontSize: 18, verticalAlign: 'middle', color: '#4361EE', marginRight: 4 }} />
+                  {edu.startDate ? new Date(edu.startDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short' }) : ''}
+                  {edu.startDate && (edu.currentlyStudying || edu.ongoing || edu.endDate) ? ' - ' : ''}
+                  {edu.currentlyStudying || edu.ongoing ? 'Present' : edu.endDate ? new Date(edu.endDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short' }) : ''}
+                </div>
+                {edu.grade && <div className={styles.expViewDescription}>Grade: {edu.grade}</div>}
+              </div>
+            ))
+          ) : (
+            <p className={styles.placeholderText}>No education added yet.</p>
+          )
+        )}
+      </div>
       <div className={styles.skillsSection}>
         <h3>Skills</h3>
         {editMode && editProfile && onSkillsChange ? (
@@ -403,6 +625,19 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           </Button>
         </div>
       )}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

@@ -3,11 +3,14 @@ import {
   getAvailableContacts,
   getProfile,
   getProfiles,
+  parseResume,
   updateProfile,
 } from "../api/profile";
 import { checkResponseSuccess } from "./util";
 import { UpdateProfileRequest } from "../types/requests";
 import axiosInstance from "../api/axiosInstance";
+import { AxiosError } from "axios";
+import { ParsedResume, Response } from "../types/responses";
 
 export const useGetProfiles = (
   role: string,
@@ -93,6 +96,22 @@ export function useUnlockProfile() {
         `/unlock-profile?id=${userId}&profileId=${profileId}`
       );
       return res.data.message;
+    },
+  });
+}
+
+export function useParseResume(onCustomSuccess: (data: ParsedResume | undefined) => void, onCustomError: (err: string) => void) {
+  const mutationFn = async (fileId: string) => {
+    const response = await parseResume(fileId);
+    return checkResponseSuccess(response);
+  }
+  return useMutation({
+    mutationFn,
+    onSuccess: (data) => {
+      onCustomSuccess(data);
+    },
+    onError: (error: AxiosError) => {
+      onCustomError((error.response?.data as Response<any>)?.message ?? "An error occurred");
     },
   });
 }
