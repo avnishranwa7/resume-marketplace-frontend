@@ -18,7 +18,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import GoogleIcon from '@mui/icons-material/Google';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
-import axiosInstance from '../api/axiosInstance';
 import { useParseResume } from '../queries/profile';
 import { Alert, AlertColor, Snackbar } from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
