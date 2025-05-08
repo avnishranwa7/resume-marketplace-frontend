@@ -1,68 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { UploadIcon, DiscoverIcon, HiredIcon } from '../assets/icons';
-import { avatars } from '../assets/avatars';
-import '../styles/Home.css';
-import { MenuItem, Select, Checkbox, ListItemText, Divider } from '@mui/material';
-import Radio from '@mui/material/Radio';
-import useDocumentTitle from '../hooks/useDocumentTitle';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { UploadIcon, DiscoverIcon, HiredIcon } from "../assets/icons";
+import "../styles/Home.css";
+import {
+  MenuItem,
+  Select,
+  Checkbox,
+  ListItemText,
+  Divider,
+} from "@mui/material";
+import Radio from "@mui/material/Radio";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
 
 const Home: React.FC = () => {
-  useDocumentTitle('Home');
+  useDocumentTitle("Home");
 
   const navigate = useNavigate();
   const location = useLocation();
   const [filters, setFilters] = useState({
-    role: '',
-    keyword: '',
-    yoe: '',
-    noticePeriod: '',
+    role: "",
+    keyword: "",
+    yoe: "",
+    noticePeriod: "",
     immediatelyAvailable: false,
   });
   const [touched, setTouched] = useState(false);
 
   const allRoles = [
-    'Frontend Developer',
-    'Backend Developer',
-    'Full Stack Developer',
-    'Data Scientist',
-    'Product Manager',
-    'UI/UX Designer',
-    'DevOps Engineer',
-    'QA Engineer',
-    'Mobile Developer',
-    'Project Manager',
-    'Business Analyst',
-    'Software Developer',
+    "Frontend Developer",
+    "Backend Developer",
+    "Full Stack Developer",
+    "Data Scientist",
+    "Product Manager",
+    "UI/UX Designer",
+    "DevOps Engineer",
+    "QA Engineer",
+    "Mobile Developer",
+    "Project Manager",
+    "Business Analyst",
+    "Software Developer",
   ];
 
   // On mount, read filters from URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      role: params.get('role') || '',
-      keyword: params.get('keyword') || '',
-      yoe: params.get('yoe') || '',
-      noticePeriod: params.get('noticePeriod') || '',
-      immediatelyAvailable: params.get('immediatelyAvailable') === 'true',
+      role: params.get("role") || "",
+      keyword: params.get("keyword") || "",
+      yoe: params.get("yoe") || "",
+      noticePeriod: params.get("noticePeriod") || "",
+      immediatelyAvailable: params.get("immediatelyAvailable") === "true",
     }));
   }, [location.search]);
 
   // On filter change, update URL
   const updateUrlParams = (newFilters: typeof filters) => {
     const params = new URLSearchParams();
-    if (newFilters.role) params.set('role', newFilters.role);
-    if (newFilters.keyword) params.set('keyword', newFilters.keyword);
-    if (newFilters.yoe) params.set('yoe', newFilters.yoe);
-    if (newFilters.noticePeriod) params.set('noticePeriod', newFilters.noticePeriod);
-    if (newFilters.immediatelyAvailable) params.set('immediatelyAvailable', 'true');
-    navigate({ pathname: '/', search: params.toString() }, { replace: true });
+    if (newFilters.role) params.set("role", newFilters.role);
+    if (newFilters.keyword) params.set("keyword", newFilters.keyword);
+    if (newFilters.yoe) params.set("yoe", newFilters.yoe);
+    if (newFilters.noticePeriod)
+      params.set("noticePeriod", newFilters.noticePeriod);
+    if (newFilters.immediatelyAvailable)
+      params.set("immediatelyAvailable", "true");
+    navigate({ pathname: "/", search: params.toString() }, { replace: true });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFilters(prev => {
+    setFilters((prev) => {
       const updated = { ...prev, [name]: value };
       updateUrlParams(updated);
       return updated;
@@ -73,12 +83,12 @@ const Home: React.FC = () => {
   // Handler for the custom notice period dropdown
   const handleNoticePeriodDropdownChange = (event: any) => {
     const value = event.target.value;
-    const noticePeriodOptions = ['', '15', '30', '60', '90'];
+    const noticePeriodOptions = ["", "15", "30", "60", "90"];
     if (Array.isArray(value)) {
-      const hasImmediate = value.includes('immediate');
+      const hasImmediate = value.includes("immediate");
       const lastSelected = value[value.length - 1];
       if (noticePeriodOptions.includes(lastSelected)) {
-        setFilters(prev => {
+        setFilters((prev) => {
           const updated = {
             ...prev,
             immediatelyAvailable: hasImmediate,
@@ -88,7 +98,7 @@ const Home: React.FC = () => {
           return updated;
         });
       } else {
-        setFilters(prev => {
+        setFilters((prev) => {
           const updated = {
             ...prev,
             immediatelyAvailable: hasImmediate,
@@ -98,7 +108,7 @@ const Home: React.FC = () => {
         });
       }
     } else {
-      setFilters(prev => {
+      setFilters((prev) => {
         const updated = { ...prev, noticePeriod: value };
         updateUrlParams(updated);
         return updated;
@@ -113,75 +123,46 @@ const Home: React.FC = () => {
       return;
     }
     const params = new URLSearchParams();
-    params.set('role', filters.role);
-    if (filters.keyword) params.set('keyword', filters.keyword);
-    if (filters.yoe) params.set('yoe', filters.yoe);
-    if (filters.noticePeriod) params.set('noticePeriod', filters.noticePeriod);
-    if (filters.immediatelyAvailable) params.set('immediatelyAvailable', 'true');
+    params.set("role", filters.role);
+    if (filters.keyword) params.set("keyword", filters.keyword);
+    if (filters.yoe) params.set("yoe", filters.yoe);
+    if (filters.noticePeriod) params.set("noticePeriod", filters.noticePeriod);
+    if (filters.immediatelyAvailable)
+      params.set("immediatelyAvailable", "true");
     navigate(`/explore?${params.toString()}`);
   };
 
   const handleReset = () => {
     setFilters({
-      role: '',
-      keyword: '',
-      yoe: '',
-      noticePeriod: '',
+      role: "",
+      keyword: "",
+      yoe: "",
+      noticePeriod: "",
       immediatelyAvailable: false,
     });
     setTouched(false);
-    navigate({ pathname: '/' }, { replace: true });
+    navigate({ pathname: "/" }, { replace: true });
   };
 
-  const featuredResumes = [
-    {
-      name: 'Emily R.',
-      location: 'New York, NY',
-      role: 'Software Engineer',
-      experience: '3 Years',
-      skills: ['JavaScript', 'React', 'Node.js'],
-      image: avatars.emily
-    },
-    {
-      name: 'Michael S.',
-      location: 'San Francisco, CA',
-      role: 'Data Analyst',
-      experience: '3 Years',
-      skills: ['SQL', 'Python', 'Tableau'],
-      image: avatars.michael
-    },
-    {
-      name: 'Sarah W.',
-      location: 'Austin, TX',
-      role: 'Marketing Manager',
-      experience: '8 Years',
-      skills: ['Social Marketing', 'Social Media'],
-      image: avatars.sarah
-    },
-    {
-      name: 'David L.',
-      location: 'Seattle, WA',
-      role: 'Product Designer',
-      experience: '6 Years',
-      skills: ['UI/UX', 'Sketch'],
-      image: avatars.david
-    }
-  ];
-
   const popularTags = [
-    'React', 'Python', 'Product Management', 'Data Science',
-    'UI/UX', 'Marketing', 'Azure'
+    "React",
+    "Python",
+    "Product Management",
+    "Data Science",
+    "UI/UX",
+    "Marketing",
+    "Azure",
   ];
 
   // Compose the value for the Select component
   const noticePeriodSelectValue: string[] = [];
   if (filters.immediatelyAvailable) {
-    noticePeriodSelectValue.push('immediate');
+    noticePeriodSelectValue.push("immediate");
   }
   if (
-    typeof filters.noticePeriod === 'string' &&
-    filters.noticePeriod !== '' &&
-    filters.noticePeriod !== 'immediate'
+    typeof filters.noticePeriod === "string" &&
+    filters.noticePeriod !== "" &&
+    filters.noticePeriod !== "immediate"
   ) {
     noticePeriodSelectValue.push(filters.noticePeriod);
   }
@@ -191,7 +172,11 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
-          <h1>Find the Right<br />Talent, Instantly.</h1>
+          <h1>
+            Find the Right
+            <br />
+            Talent, Instantly.
+          </h1>
           <p>Find thousands of candidates that match your requirements.</p>
 
           {/* Search Form */}
@@ -202,11 +187,15 @@ const Home: React.FC = () => {
                 value={filters.role}
                 onChange={handleChange}
                 required
-                className={touched && !filters.role ? 'input-error' : ''}
+                className={touched && !filters.role ? "input-error" : ""}
               >
-                <option value="" disabled>Select a role</option>
-                {allRoles.map(role => (
-                  <option key={role} value={role}>{role}</option>
+                <option value="" disabled>
+                  Select a role
+                </option>
+                {allRoles.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
                 ))}
               </select>
               <input
@@ -216,14 +205,12 @@ const Home: React.FC = () => {
                 onChange={handleChange}
                 name="keyword"
               />
-              <select
-                value={filters.yoe}
-                onChange={handleChange}
-                name="yoe"
-              >
+              <select value={filters.yoe} onChange={handleChange} name="yoe">
                 <option value="">YOE</option>
-                {[1,2,3,4,5,6,7,8,9,10].map(y => (
-                  <option key={y} value={y}>{y} Years</option>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((y) => (
+                  <option key={y} value={y}>
+                    {y} Years
+                  </option>
                 ))}
               </select>
               <Select
@@ -233,58 +220,80 @@ const Home: React.FC = () => {
                 value={noticePeriodSelectValue}
                 onChange={handleNoticePeriodDropdownChange}
                 renderValue={(selected) => {
-                  if (!selected.length) return 'Select notice period';
+                  if (!selected.length) return "Select notice period";
                   const labels = [];
-                  if (selected.includes('immediate')) labels.push('Immediately Available');
-                  const period = (selected as string[]).find((v: string) => v !== 'immediate');
-                  if (period === '') labels.push('Any');
+                  if (selected.includes("immediate"))
+                    labels.push("Immediately Available");
+                  const period = (selected as string[]).find(
+                    (v: string) => v !== "immediate"
+                  );
+                  if (period === "") labels.push("Any");
                   else if (period) labels.push(`${period} days`);
-                  return labels.join(', ');
+                  return labels.join(", ");
                 }}
                 displayEmpty
                 size="small"
                 sx={{
-                  minHeight: '40px',
-                  height: '40px',
-                  fontSize: '1rem',
-                  '.MuiSelect-select': { padding: '10px 14px' },
-                  background: '#fff',
-                  borderRadius: '4px',
+                  minHeight: "40px",
+                  height: "40px",
+                  fontSize: "1rem",
+                  ".MuiSelect-select": { padding: "10px 14px" },
+                  background: "#fff",
+                  borderRadius: "4px",
                 }}
               >
                 <MenuItem value="immediate" dense>
-                  <Checkbox checked={filters.immediatelyAvailable} size="small" />
+                  <Checkbox
+                    checked={filters.immediatelyAvailable}
+                    size="small"
+                  />
                   <ListItemText primary="Immediately Available" />
                 </MenuItem>
                 <Divider />
                 <MenuItem value="" dense>
-                  <Radio checked={filters.noticePeriod === ''} size="small" />
+                  <Radio checked={filters.noticePeriod === ""} size="small" />
                   <ListItemText primary="Any" />
                 </MenuItem>
                 <MenuItem value="15" dense>
-                  <Radio checked={filters.noticePeriod === '15'} size="small" />
+                  <Radio checked={filters.noticePeriod === "15"} size="small" />
                   <ListItemText primary="15 days" />
                 </MenuItem>
                 <MenuItem value="30" dense>
-                  <Radio checked={filters.noticePeriod === '30'} size="small" />
+                  <Radio checked={filters.noticePeriod === "30"} size="small" />
                   <ListItemText primary="30 days" />
                 </MenuItem>
                 <MenuItem value="60" dense>
-                  <Radio checked={filters.noticePeriod === '60'} size="small" />
+                  <Radio checked={filters.noticePeriod === "60"} size="small" />
                   <ListItemText primary="60 days" />
                 </MenuItem>
                 <MenuItem value="90" dense>
-                  <Radio checked={filters.noticePeriod === '90'} size="small" />
+                  <Radio checked={filters.noticePeriod === "90"} size="small" />
                   <ListItemText primary="90 days" />
                 </MenuItem>
               </Select>
-              <button type="submit" className="search-btn">Search</button>
-              <button type="button" className="search-btn" style={{ background: '#e2e8f0', color: '#222b45', marginLeft: 8 }} onClick={handleReset}>Reset</button>
+              <button type="submit" className="search-btn">
+                Search
+              </button>
+              <button
+                type="button"
+                className="search-btn"
+                style={{
+                  background: "#e2e8f0",
+                  color: "#222b45",
+                  marginLeft: 8,
+                }}
+                onClick={handleReset}
+              >
+                Reset
+              </button>
             </div>
           </form>
         </div>
         <div className="hero-image">
-          <img src="/src/assets/hero-illustration.svg" alt="Find talent illustration" />
+          <img
+            src="/src/assets/hero-illustration.svg"
+            alt="Find talent illustration"
+          />
         </div>
       </section>
 
@@ -316,29 +325,52 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Resumes Section */}
-      <section className="featured-resumes">
+      {/* AI Features Section */}
+      <section className="ai-showcase">
         <div className="section-header">
-          <h2>Featured Resumes</h2>
-          <button onClick={() => navigate('/search')} className="view-more">
-            View More →
-          </button>
+          <div className="ai-badge">AI-Powered</div>
+          <h2>Smart Recruitment Features</h2>
+          {/* <div className="section-subtitle">
+            Experience the future of recruitment with our advanced AI
+            capabilities
+          </div> */}
         </div>
-        <div className="resume-cards">
-          {featuredResumes.map((resume, index) => (
-            <div key={index} className="resume-card">
-              <img src={resume.image} alt={resume.name} className="avatar" />
-              <h3>{resume.name}</h3>
-              <p className="location">{resume.location}</p>
-              <p className="role">{resume.role}</p>
-              <p className="experience">{resume.experience}</p>
-              <div className="skills">
-                {resume.skills.map((skill, idx) => (
-                  <span key={idx} className="skill-tag">{skill}</span>
-                ))}
-              </div>
+        <div className="ai-features-grid">
+          <div className="ai-feature-card">
+            <div className="ai-feature-icon">
+              <AutoAwesome />
             </div>
-          ))}
+            <div className="audience-badge recruiter">For Recruiters</div>
+            <h3>Smart JD Analysis</h3>
+            <p>
+              Upload job descriptions and let our AI automatically extract key
+              requirements, skills, and experience needed to find the perfect
+              candidates
+            </p>
+            <ul className="feature-list">
+              <li>Automatic skill extraction</li>
+              <li>Experience level detection</li>
+              <li>Notice period requirements</li>
+              <li>Smart candidate matching</li>
+            </ul>
+          </div>
+          <div className="ai-feature-card">
+            <div className="ai-feature-icon">
+              <AutoAwesome />
+            </div>
+            <div className="audience-badge jobseeker">For Job Seekers</div>
+            <h3>Resume Parsing</h3>
+            <p>
+              Create detailed profiles instantly with our advanced resume
+              parsing technology to showcase your skills and experience
+            </p>
+            <ul className="feature-list">
+              <li>Instant profile creation</li>
+              <li>Accurate skill extraction</li>
+              <li>Work history formatting</li>
+              <li>Education details parsing</li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -347,7 +379,11 @@ const Home: React.FC = () => {
         <h2>Popular Tags</h2>
         <div className="tags">
           {popularTags.map((tag, index) => (
-            <button key={index} className="tag" onClick={() => setFilters(prev => ({ ...prev, tags: tag }))}>
+            <button
+              key={index}
+              className="tag"
+              onClick={() => setFilters((prev) => ({ ...prev, tags: tag }))}
+            >
               {tag}
             </button>
           ))}
@@ -357,4 +393,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home; 
+export default Home;

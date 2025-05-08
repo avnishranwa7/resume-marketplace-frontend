@@ -16,31 +16,34 @@ export interface Order {
 }
 
 export interface ParsedResume {
+  about: Array<string>;
   name: string;
-  contact: {
-    email: string;
-    phone: string;
-  };
-  skills: {
-    languages: Array<string>;
-    technologies: Array<string>;
-  };
+  email: string;
+  phone: string;
+  skills: Array<string>;
+  keywords: Array<string>;
   education: Array<{
     degree: string;
-    institute: string;
+    university: string;
     duration: string;
     grade: string;
   }>;
   projects: Array<{
     title: string;
-    description: string;
+    details: Array<string>;
   }>;
   experience: Array<{
     company: string;
     title: string;
     duration: string;
-    location: string;
     details: Array<string>;
   }>;
-  
+}
+
+export interface ParsedJD {
+  role: string;
+  keywords: Array<string>;
+  experience: string;
+  notice_period: string;
+  immediately_available_required: string;
 }

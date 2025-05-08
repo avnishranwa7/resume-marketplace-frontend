@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
 import styles from "./Profile.module.css";
 import ProfileCard from "../components/ProfileCard";
@@ -6,11 +6,12 @@ import { useGetProfile, useUpdateProfile } from "../queries/profile";
 import { ProfileData } from "../types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import useDocumentTitle from '../hooks/useDocumentTitle';
-import { ParsedResume } from '../types/responses';
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import { ParsedResume } from "../types/responses";
+import { Alert, AlertColor, Snackbar } from "@mui/material";
 
 const Profile: React.FC = () => {
-  useDocumentTitle('My Profile');
+  useDocumentTitle("My Profile");
 
   const userId = localStorage.getItem("userId") ?? "";
   const navigate = useNavigate();
@@ -28,14 +29,29 @@ const Profile: React.FC = () => {
     { company?: string; role?: string; startDate?: string; endDate?: string }[]
   >([]);
   const [educationErrors, setEducationErrors] = useState<
-    { college?: string; degree?: string; startDate?: string; endDate?: string }[]
+    {
+      college?: string;
+      degree?: string;
+      startDate?: string;
+      endDate?: string;
+    }[]
   >([]);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: AlertColor;
+  }>({ open: false, message: "", severity: "info" });
 
   const { data: profile, isLoading, error } = useGetProfile(userId, "userId");
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile(
     () => {
       queryClient.invalidateQueries({ queryKey: ["profile", userId] });
       setEditMode(false);
+      setSnackbar({
+        open: true,
+        message: "Profile updated successfully.",
+        severity: "success",
+      });
     }
   );
 
@@ -77,9 +93,18 @@ const Profile: React.FC = () => {
       prev
         ? {
             ...prev,
-            experience: prev.experience.map((exp, i) =>
-              i === idx ? { ...exp, [field]: value } : exp
-            ),
+            experience: prev.experience.map((exp, i) => {
+              if (i !== idx) return exp;
+              if (field === "startDate" || field === "endDate") {
+                // Convert MM/YYYY to YYYY-MM-DD for storage
+                const [month, year] = value.toString().split("/");
+                if (month && year) {
+                  const date = new Date(parseInt(year), parseInt(month) - 1);
+                  return { ...exp, [field]: date.toISOString().slice(0, 10) };
+                }
+              }
+              return { ...exp, [field]: value };
+            }),
           }
         : prev
     );
@@ -128,6 +153,14 @@ const Profile: React.FC = () => {
             ...prev,
             education: prev.education.map((edu, i) => {
               if (i !== idx) return edu;
+              if (field === "startDate" || field === "endDate") {
+                // Convert MM/YYYY to YYYY-MM-DD for storage
+                const [month, year] = value.toString().split("/");
+                if (month && year) {
+                  const date = new Date(parseInt(year), parseInt(month) - 1);
+                  return { ...edu, [field]: date.toISOString().slice(0, 10) };
+                }
+              }
               if (field === "ongoing" && value === true) {
                 return { ...edu, ongoing: true, endDate: "" };
               }
@@ -177,7 +210,7 @@ const Profile: React.FC = () => {
     if (!profile) return;
     setEditProfile({
       ...profile,
-      education: profile.education || []
+      education: profile.education || [],
     });
     setEditMode(true);
   };
@@ -221,8 +254,7 @@ const Profile: React.FC = () => {
       } = {};
       if (!edu.college || !edu.college.trim())
         err.college = "College name is required";
-      if (!edu.degree || !edu.degree.trim())
-        err.degree = "Degree is required";
+      if (!edu.degree || !edu.degree.trim()) err.degree = "Degree is required";
       if (!edu.startDate || !edu.startDate.trim())
         err.startDate = "Start date is required";
       if (!edu.ongoing && (!edu.endDate || !edu.endDate.trim()))
@@ -236,53 +268,85 @@ const Profile: React.FC = () => {
 
     if (hasErrors || hasEducationErrors) return;
     // Map ongoing to currentlyStudying in the payload
-    const educationWithCurrentlyStudying = editProfile.education.map(({ ongoing, ...rest }) => ({
-      ...rest,
-      ...(ongoing !== undefined ? { currentlyStudying: ongoing } : {}),
-    }));
-    updateProfile({ ...editProfile, id: userId, education: educationWithCurrentlyStudying });
+    const educationWithCurrentlyStudying = editProfile.education.map(
+      ({ ongoing, ...rest }) => ({
+        ...rest,
+        ...(ongoing !== undefined ? { currentlyStudying: ongoing } : {}),
+      })
+    );
+    updateProfile({
+      ...editProfile,
+      id: userId,
+      education: educationWithCurrentlyStudying,
+    });
   };
 
   const handleAutofill = (parsed: ParsedResume) => {
     setEditProfile((prev) => {
       if (!prev) return prev;
-      // Helper to parse duration like 'Aug 2019 – May 2023' or 'Aug 2019 – Present'
+      // Helper to parse duration like 'MM/YYYY - MM/YYYY' or 'MM/YYYY - Present'
       function parseDuration(duration: string) {
-        const match = duration.match(/([A-Za-z]{3,9} \d{4})\s*[–-]\s*([A-Za-z]{3,9} \d{4}|Present)/);
-        if (!match) return { startDate: '', endDate: '', currentlyStudying: false };
+        const match = duration.match(
+          /(\d{2}\/\d{4})\s*[–-]\s*(\d{2}\/\d{4}|Present)/
+        );
+        if (!match)
+          return { startDate: "", endDate: "", currentlyStudying: false };
         const [_, start, end] = match;
-        const startDate = start ? new Date(start).toISOString().slice(0, 10) : '';
-        let endDate = '';
+        const [startMonth, startYear] = start.split("/");
+        const startDate = new Date(
+          parseInt(startYear),
+          parseInt(startMonth) - 1
+        )
+          .toISOString()
+          .slice(0, 10);
+        let endDate = "";
         let currentlyStudying = false;
-        if (end === 'Present') {
+        if (end === "Present") {
           currentlyStudying = true;
-        } else if (end) {
-          endDate = new Date(end).toISOString().slice(0, 10);
+        } else {
+          const [endMonth, endYear] = end.split("/");
+          endDate = new Date(parseInt(endYear), parseInt(endMonth) - 1)
+            .toISOString()
+            .slice(0, 10);
         }
         return { startDate, endDate, currentlyStudying };
       }
-      const education = (parsed.education || []).map(edu => {
-        const { startDate, endDate, currentlyStudying } = parseDuration(edu.duration || '');
+      const education = (parsed.education || []).map((edu) => {
+        const { startDate, endDate, currentlyStudying } = parseDuration(
+          edu.duration || ""
+        );
         return {
-          college: edu.institute || '',
-          degree: edu.degree || '',
+          college: edu.university || "",
+          degree: edu.degree || "",
           startDate,
           endDate,
           currentlyStudying,
           ongoing: currentlyStudying,
-          grade: edu.grade || '',
+          grade: edu.grade || "",
         };
       });
+      const experience = (parsed.experience || []).map((exp) => {
+        const { startDate, endDate, currentlyStudying } = parseDuration(
+          exp.duration || ""
+        );
+        return {
+          company: exp.company || "",
+          role: exp.title || "",
+          startDate,
+          endDate,
+          currentlyWorking: currentlyStudying,
+          description: exp.details.join("\n") || "",
+        };
+      });
+
       return {
         ...prev,
-        // name: parsed.name || prev.name,
-        // email: parsed.email || prev.email,
-        // role: parsed.role || prev.role,
-        // about: parsed.about || prev.about,
-        skills: parsed.skills ? [...parsed.skills.languages, ...parsed.skills.technologies] : prev.skills,
-        experience: parsed.experience.map(exp => ({...exp, role: exp.title, startDate: ""})) || prev.experience,
+        about: parsed.about.join("\n") || prev.about,
+        skills: parsed.skills ?? prev.skills,
+        experience: experience ?? prev.experience,
         education: education ?? prev.education,
         name: parsed.name ?? prev.name,
+        keywords: parsed.keywords ?? [],
       };
     });
   };
@@ -327,6 +391,19 @@ const Profile: React.FC = () => {
           onRemoveEducation={handleRemoveEducation}
         />
       )}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

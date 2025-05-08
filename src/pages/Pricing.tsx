@@ -1,13 +1,14 @@
-import React from 'react';
+import React from "react";
 import styles from "./Pricing.module.css";
 import Button from "@mui/material/Button";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import { useNavigate } from "react-router-dom";
-import useDocumentTitle from '../hooks/useDocumentTitle';
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const Pricing: React.FC = () => {
-  useDocumentTitle('Pricing');
+  useDocumentTitle("Pricing");
 
   const navigate = useNavigate();
 
@@ -38,8 +39,12 @@ const Pricing: React.FC = () => {
               <span>Search and filter candidates</span>
             </div>
             <div className={styles.feature}>
-              <CheckCircleIcon className={styles.featureIcon} />
-              <span>Save profiles to favorites</span>
+              <AutoAwesome className={styles.featureIcon} />
+              <span>AI Job Description Analysis</span>
+            </div>
+            <div className={styles.feature}>
+              <AutoAwesome className={styles.featureIcon} />
+              <span>AI Resume Parsing</span>
             </div>
             <div className={styles.feature}>
               <CancelIcon className={styles.featureIcon} />
@@ -85,6 +90,10 @@ const Pricing: React.FC = () => {
             <div className={styles.feature}>
               <CheckCircleIcon className={styles.featureIcon} />
               <span>Direct contact with the candidate</span>
+            </div>
+            <div className={styles.feature}>
+              <CheckCircleIcon className={styles.featureIcon} />
+              <span>Access to candidate's Google Drive resume</span>
             </div>
           </div>
           <Button

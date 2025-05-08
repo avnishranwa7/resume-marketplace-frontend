@@ -3,6 +3,7 @@ import {
   getAvailableContacts,
   getProfile,
   getProfiles,
+  parseJD,
   parseResume,
   updateProfile,
 } from "../api/profile";
@@ -10,20 +11,22 @@ import { checkResponseSuccess } from "./util";
 import { UpdateProfileRequest } from "../types/requests";
 import axiosInstance from "../api/axiosInstance";
 import { AxiosError } from "axios";
-import { ParsedResume, Response } from "../types/responses";
+import { ParsedJD, ParsedResume, Response } from "../types/responses";
 
 export const useGetProfiles = (
   role: string,
   experience: number,
   immediatelyAvailable: boolean,
-  noticePeriod: string
+  noticePeriod: string,
+  keywords: string
 ) => {
   const queryFn = async () => {
     const response = await getProfiles(
       role,
       experience,
       immediatelyAvailable,
-      noticePeriod === "" ? 0 : Number(noticePeriod)
+      noticePeriod === "" ? 0 : Number(noticePeriod),
+      keywords
     );
     return checkResponseSuccess(response);
   };
@@ -34,6 +37,7 @@ export const useGetProfiles = (
       experience,
       immediatelyAvailable,
       noticePeriod,
+      keywords,
     ],
     queryFn,
     enabled: !!role,
@@ -100,18 +104,44 @@ export function useUnlockProfile() {
   });
 }
 
-export function useParseResume(onCustomSuccess: (data: ParsedResume | undefined) => void, onCustomError: (err: string) => void) {
+export function useParseResume(
+  onCustomSuccess: (data: ParsedResume | undefined) => void,
+  onCustomError: (err: string) => void
+) {
   const mutationFn = async (fileId: string) => {
     const response = await parseResume(fileId);
     return checkResponseSuccess(response);
-  }
+  };
   return useMutation({
     mutationFn,
     onSuccess: (data) => {
       onCustomSuccess(data);
     },
     onError: (error: AxiosError) => {
-      onCustomError((error.response?.data as Response<any>)?.message ?? "An error occurred");
+      onCustomError(
+        (error.response?.data as Response<any>)?.message ?? "An error occurred"
+      );
+    },
+  });
+}
+
+export function useParseJD(
+  onCustomSuccess: (data: ParsedJD | undefined) => void,
+  onCustomError: (err: string) => void
+) {
+  const mutationFn = async (jdText: string) => {
+    const response = await parseJD(jdText);
+    return checkResponseSuccess(response);
+  };
+  return useMutation({
+    mutationFn,
+    onSuccess: (data) => {
+      onCustomSuccess(data);
+    },
+    onError: (error: AxiosError) => {
+      onCustomError(
+        (error.response?.data as Response<any>)?.message ?? "An error occurred"
+      );
     },
   });
 }

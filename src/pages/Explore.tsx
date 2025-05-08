@@ -4,7 +4,7 @@ import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
 import Button from "@mui/material/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useGetProfiles } from "../queries/profile";
+import { useGetProfiles, useParseJD } from "../queries/profile";
 import { Experience } from "../types";
 import {
   Select,
@@ -13,8 +13,18 @@ import {
   Checkbox,
   ListItemText,
   Radio,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
+  AlertColor,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import useDocumentTitle from '../hooks/useDocumentTitle';
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 const mockProfiles = [
   {
@@ -151,7 +161,7 @@ const formatExperience = (years: number, months: number): string => {
 };
 
 const Explore = () => {
-  useDocumentTitle('Explore Profiles');
+  useDocumentTitle("Explore Profiles");
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
@@ -170,14 +180,49 @@ const Explore = () => {
   });
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
+  const [isJdModalOpen, setIsJdModalOpen] = useState(false);
+  const [jdText, setJdText] = useState("");
+  const [jdError, setJdError] = useState("");
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: AlertColor;
+  }>({ open: false, message: "", severity: "info" });
 
   const { data } = useGetProfiles(
     appliedFilters.role,
     Number(appliedFilters.yoe),
     appliedFilters.immediatelyAvailable,
-    appliedFilters.noticePeriod
+    appliedFilters.noticePeriod,
+    appliedFilters.keyword
   );
   const profiles = !appliedFilters.role ? [] : data ?? [];
+
+  const { mutate: parseJD, isPending: parsingJD } = useParseJD(
+    (data) => {
+      setFilters({
+        keyword: data?.keywords?.join(",") ?? "",
+        yoe: data?.experience ?? "",
+        role: data?.role ?? "",
+        noticePeriod:
+          data?.notice_period === "Any" ? "" : data?.notice_period ?? "",
+        immediatelyAvailable: data?.immediately_available_required === "true",
+      });
+      setIsJdModalOpen(false);
+      setSnackbar({
+        open: true,
+        message: "Filters applied successfully!",
+        severity: "success",
+      });
+    },
+    () => {
+      setSnackbar({
+        open: true,
+        message: "Failed to parse Job Description",
+        severity: "error",
+      });
+    }
+  );
 
   // On mount, read filters from URL
   useEffect(() => {
@@ -281,6 +326,39 @@ const Explore = () => {
   ) {
     noticePeriodSelectValue.push(filters.noticePeriod);
   }
+
+  const isValidJD = (text: string) => {
+    return (
+      text.length >= 200 &&
+      /developer|engineer|manager|skills|experience|responsibilities/i.test(
+        text
+      )
+    );
+  };
+
+  const handleJdModalOpen = () => {
+    setIsJdModalOpen(true);
+    setJdError("");
+  };
+
+  const handleJdModalClose = () => {
+    setIsJdModalOpen(false);
+    setJdText("");
+    setJdError("");
+  };
+
+  const handleJdParse = async () => {
+    if (!jdText.trim()) return;
+
+    if (!isValidJD(jdText)) {
+      setJdError(
+        "Please enter a valid job description with at least 200 characters and relevant keywords."
+      );
+      return;
+    }
+
+    parseJD(jdText);
+  };
 
   return (
     <div className={styles.explorePage}>
@@ -425,6 +503,24 @@ const Explore = () => {
         >
           Reset
         </Button>
+        <Button
+          id="jdUploadBtn"
+          variant="outlined"
+          className={styles.jdUploadBtn}
+          onClick={handleJdModalOpen}
+          startIcon={<AutoAwesomeIcon />}
+          sx={{
+            borderColor: "#4361EE",
+            color: "#4361EE",
+            fontWeight: 500,
+            textTransform: "none",
+            borderRadius: "8px",
+            minWidth: "180px",
+            marginLeft: "auto",
+          }}
+        >
+          AI Talent Match
+        </Button>
       </div>
       <div className={styles.profileGrid}>
         {paginatedProfiles.length === 0 ? (
@@ -511,6 +607,142 @@ const Explore = () => {
           </Button>
         </div>
       )}
+
+      {/* JD Parsing Modal */}
+      <Dialog
+        open={isJdModalOpen}
+        onClose={handleJdModalClose}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            padding: "24px 32px 16px",
+            "& .MuiTypography-root": {
+              fontSize: "1.5rem",
+              fontWeight: 600,
+              color: "#1e293b",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+            },
+          }}
+        >
+          <AutoAwesomeIcon sx={{ color: "#7C3AED", fontSize: "1.8rem" }} />
+          AI Job Description Analysis
+        </DialogTitle>
+        <DialogContent sx={{ padding: { xs: "16px 20px", sm: "24px 32px" } }}>
+          <div className={styles.modalDescription}>
+            Our AI will analyze the job description and automatically find the
+            best matching candidates based on:
+            <ul>
+              <li>Required skills and experience</li>
+              <li>Role and seniority level</li>
+              <li>Notice period requirements</li>
+            </ul>
+          </div>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Paste Job Description"
+            fullWidth
+            multiline
+            rows={8}
+            value={jdText}
+            onChange={(e) => {
+              setJdText(e.target.value);
+              setJdError("");
+            }}
+            placeholder="Paste the job description here. Our AI will analyze it and find the best matching candidates..."
+            variant="outlined"
+            className={styles.jdInput}
+            error={!!jdError}
+            helperText={jdError}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                fontSize: { xs: "0.875rem", sm: "1rem" },
+              },
+              "& .MuiFormHelperText-root": {
+                fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+                marginTop: "8px",
+                fontWeight: 500,
+              },
+            }}
+          />
+        </DialogContent>
+        <DialogActions
+          sx={{
+            padding: "16px 32px 24px",
+            gap: "12px",
+          }}
+        >
+          <Button
+            onClick={handleJdModalClose}
+            variant="outlined"
+            sx={{
+              borderColor: "#e2e8f0",
+              color: "#64748b",
+              "&:hover": {
+                borderColor: "#cbd5e1",
+                backgroundColor: "#f8fafc",
+              },
+              minWidth: { xs: "90px", sm: "100px" },
+              height: { xs: "32px", sm: "36px" },
+              fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+              padding: { xs: "4px 12px", sm: "6px 16px" },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleJdParse}
+            variant="contained"
+            disabled={!jdText.trim() || parsingJD}
+            startIcon={
+              parsingJD ? (
+                <CircularProgress size={16} />
+              ) : (
+                <AutoAwesomeIcon sx={{ fontSize: "1.1rem" }} />
+              )
+            }
+            sx={{
+              backgroundColor: "#7C3AED",
+              "&:hover": {
+                backgroundColor: "#6D28D9",
+              },
+              "&.Mui-disabled": {
+                backgroundColor: "#e2e8f0",
+                color: "#94a3b8",
+              },
+              minWidth: { xs: "90px", sm: "100px" },
+              height: { xs: "32px", sm: "36px" },
+              fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+              padding: { xs: "4px 12px", sm: "6px 16px" },
+            }}
+          >
+            {parsingJD ? "Analyzing..." : "Analyze JD"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

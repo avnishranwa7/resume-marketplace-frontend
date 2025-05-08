@@ -2,7 +2,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'jobseeker' | 'recruiter';
+  role: "jobseeker" | "recruiter";
 }
 
 export interface Profile {
@@ -57,6 +57,7 @@ export interface ProfileData {
   experience: Experience[];
   education: Education[];
   skills: string[];
+  keywords: string[];
   phone?: string;
   yearsOfExperience?: number;
   immediatelyAvailable?: boolean;

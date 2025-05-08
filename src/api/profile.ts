@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { ProfileData } from "../types";
-import { ParsedResume, Response } from "../types/responses";
+import { ParsedJD, ParsedResume, Response } from "../types/responses";
 import axiosInstance from "./axiosInstance";
 import { UpdateProfileRequest } from "../types/requests";
 
@@ -8,10 +8,11 @@ export async function getProfiles(
   role: string,
   experience: number,
   immediatelyAvailable: boolean,
-  noticePeriod: number
+  noticePeriod: number,
+  keywords: string
 ): Promise<AxiosResponse<Response<Array<ProfileData>>>> {
   return axiosInstance.get(
-    `/profiles?role=${role}&experience=${experience}&immediatelyAvailable=${immediatelyAvailable}&noticePeriod=${noticePeriod}`
+    `/profiles?role=${role}&experience=${experience}&immediatelyAvailable=${immediatelyAvailable}&noticePeriod=${noticePeriod}&keywords=${keywords}`
   );
 }
 
@@ -34,6 +35,14 @@ export async function getAvailableContacts(
   return axiosInstance.get(`/available-contacts?id=${id}`);
 }
 
-export async function parseResume(fileId: string): Promise<AxiosResponse<Response<ParsedResume>>> {
+export async function parseResume(
+  fileId: string
+): Promise<AxiosResponse<Response<ParsedResume>>> {
   return axiosInstance.post("/parse-resume", { fileId });
+}
+
+export async function parseJD(
+  jdText: string
+): Promise<AxiosResponse<Response<ParsedJD>>> {
+  return axiosInstance.post("/parse-jd", { jdText });
 }

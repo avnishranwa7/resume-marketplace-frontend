@@ -157,6 +157,8 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 1100px;
 }
 
 .applyBtn {
@@ -166,7 +168,7 @@
   text-transform: none !important;
   border-radius: 8px !important;
   min-width: 100px;
-  height: 44px;
+  height: 40px;
 }
 
 .resetBtn {
@@ -176,7 +178,7 @@
   background: #f7faff !important;
   font-weight: 500 !important;
   text-transform: none !important;
-  height: 44px;
+  height: 40px;
   min-width: 100px;
   margin: 0;
   transition: background 0.2s, color 0.2s;
@@ -185,6 +187,73 @@
 .resetBtn:hover {
   background: #e9effd !important;
   color: #222b45 !important;
+}
+
+.jdUploadBtn {
+  border-color: #7C3AED !important;
+  color: #7C3AED !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 12px !important;
+  min-width: 180px !important;
+  height: 40px;
+  margin-left: auto !important;
+  transition: all 0.3s ease !important;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(99, 102, 241, 0.12) 100%) !important;
+  border-width: 1.5px !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.jdUploadBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(124, 58, 237, 0.1),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.jdUploadBtn:hover {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(99, 102, 241, 0.16) 100%) !important;
+  color: #6D28D9 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.15) !important;
+}
+
+.jdUploadBtn:hover::before {
+  left: 100%;
+}
+
+.jdUploadBtn .MuiSvgIcon-root {
+  font-size: 1.3rem !important;
+  margin-right: 6px !important;
+  color: #7C3AED !important;
+  filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.2));
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 900px) {
@@ -285,4 +354,98 @@
 .immediatelyAvailableCheckbox input[type="checkbox"] {
   margin-right: 0.5rem;
   transform: scale(1.2);
+}
+
+.jdInput {
+  margin-top: 1rem !important;
+}
+
+.jdInput .MuiOutlinedInput-root {
+  background: #f8fafc;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.jdInput .MuiOutlinedInput-root:hover {
+  background: #f1f5f9;
+}
+
+.jdInput .MuiOutlinedInput-root.Mui-focused {
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+}
+
+.jdInput .MuiOutlinedInput-input {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #1e293b;
+}
+
+.jdInput .MuiInputLabel-root {
+  color: #64748b;
+}
+
+.jdInput .MuiInputLabel-root.Mui-focused {
+  color: #7C3AED;
+}
+
+.modalDescription {
+  margin-bottom: 24px;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.modalDescription ul {
+  margin: 12px 0 0 0;
+  padding-left: 24px;
+}
+
+.modalDescription li {
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.modalDescription li:last-child {
+  margin-bottom: 0;
+}
+
+.modalDescription li::marker {
+  color: #7C3AED;
+}
+
+@media (max-width: 600px) {
+  .modalDescription {
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+  }
+
+  .modalDescription ul {
+    padding-left: 20px;
+    margin-top: 8px;
+  }
+
+  .modalDescription li {
+    margin-bottom: 6px;
+  }
+
+  .jdInput .MuiOutlinedInput-root {
+    border-radius: 8px;
+  }
+
+  .jdInput .MuiOutlinedInput-input {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .filterActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .filterActions button {
+    width: 100%;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+  }
 } 
