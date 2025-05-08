@@ -9,4 +9,6 @@ export interface UpdateProfileRequest {
   experience: Experience[];
   skills: string[];
   education: any[];
+  driveLink?: string;
+  phone?: string;
 }

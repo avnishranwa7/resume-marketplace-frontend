@@ -395,7 +395,7 @@ input, textarea, .editInput, .editTextarea {
   text-align: center;
 }
 
-.editInput[name="name"], .editInput[name="email"], .editInput[name="role"] {
+.editInput[name="name"], .editInput[name="email"], .editInput[name="role"], .editInput[name="phone"] {
   max-width: 340px;
   width: 100%;
   margin: 0 auto 0.5rem auto;
@@ -471,4 +471,14 @@ input:-webkit-autofill:active {
   color: #222b45 !important;
   caret-color: #222b45 !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+.phone {
+  color: #4a5568;
+  font-size: 1rem;
+  margin: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
 } 

@@ -47,3 +47,12 @@ export interface ParsedJD {
   notice_period: string;
   immediately_available_required: string;
 }
+
+export interface ProfileAccess {
+  access: boolean;
+  contactData: {
+    email: boolean;
+    phone: boolean;
+    driveLink: boolean;
+  };
+}

@@ -25,6 +25,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format } from "date-fns";
+import PhoneIcon from "@mui/icons-material/Phone";
 
 interface ProfileCardProps {
   profile: ProfileData;
@@ -223,6 +224,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 onChange={onChange}
                 placeholder="Name"
               />
+              <input
+                className={styles.editInput}
+                name="phone"
+                value={editProfile.phone || ""}
+                onChange={onChange}
+                placeholder="Phone Number"
+                type="tel"
+                pattern="[0-9]{10}"
+                title="Please enter a valid 10-digit phone number"
+                required
+              />
               <select
                 className={styles.editInput}
                 name="role"
@@ -316,20 +328,35 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               </div>
             </>
           ) : (
-            <h2>{profile.name}</h2>
-          )}
-          {!editMode && profile.email && (
-            <p className={styles.email}>
-              <EmailIcon
-                sx={{
-                  color: "#4361EE",
-                  fontSize: 18,
-                  verticalAlign: "middle",
-                  marginRight: 0.5,
-                }}
-              />
-              {profile.email}
-            </p>
+            <>
+              <h2>{profile.name}</h2>
+              {profile.phone && (
+                <p className={styles.phone}>
+                  <PhoneIcon
+                    sx={{
+                      color: "#4361EE",
+                      fontSize: 18,
+                      verticalAlign: "middle",
+                      marginRight: 0.5,
+                    }}
+                  />
+                  {profile.phone}
+                </p>
+              )}
+              {profile.email && (
+                <p className={styles.email}>
+                  <EmailIcon
+                    sx={{
+                      color: "#4361EE",
+                      fontSize: 18,
+                      verticalAlign: "middle",
+                      marginRight: 0.5,
+                    }}
+                  />
+                  {profile.email}
+                </p>
+              )}
+            </>
           )}
           {!editMode && profile.role && (
             <p className={styles.email}>
@@ -384,8 +411,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 />
                 <input
                   className={styles.editInput}
-                  name="resumeLink"
-                  value={editProfile.resumeLink || ""}
+                  name="driveLink"
+                  value={editProfile.driveLink || ""}
                   onChange={onChange}
                   placeholder="Paste your Google Drive link"
                   type="url"
@@ -398,14 +425,14 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   type="button"
                   onClick={() =>
                     parse(
-                      extractGoogleDriveFileId(editProfile.resumeLink ?? "") ??
+                      extractGoogleDriveFileId(editProfile.driveLink ?? "") ??
                         ""
                     )
                   }
                   disabled={
                     parsing ||
-                    !editProfile.resumeLink ||
-                    !/^https:\/\/.+/.test(editProfile.resumeLink)
+                    !editProfile.driveLink ||
+                    !/^https:\/\/.+/.test(editProfile.driveLink)
                   }
                   style={{
                     background: "#4361EE",
@@ -445,10 +472,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             </div>
           )}
           {/* Resume Link Display - Improved UI */}
-          {!editMode && profile.resumeLink && (
+          {!editMode && profile.driveLink && (
             <div style={{ margin: "0.5rem 0 0.5rem 0", textAlign: "center" }}>
               <a
-                href={profile.resumeLink}
+                href={profile.driveLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -461,11 +488,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   fontWeight: 500,
                 }}
               >
-                <InsertDriveFileIcon
-                  sx={{ color: "#4361EE", fontSize: 20, marginRight: 2 }}
-                />
                 <GoogleIcon
-                  sx={{ color: "#EA4335", fontSize: 20, marginRight: 6 }}
+                  sx={{ color: "#EA4335", fontSize: 20, marginRight: 0.5 }}
                 />
                 View Resume (Google Drive)
               </a>

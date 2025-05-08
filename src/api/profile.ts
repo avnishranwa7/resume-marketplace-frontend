@@ -1,6 +1,11 @@
 import { AxiosResponse } from "axios";
 import { ProfileData } from "../types";
-import { ParsedJD, ParsedResume, Response } from "../types/responses";
+import {
+  ParsedJD,
+  ParsedResume,
+  ProfileAccess,
+  Response,
+} from "../types/responses";
 import axiosInstance from "./axiosInstance";
 import { UpdateProfileRequest } from "../types/requests";
 
@@ -45,4 +50,13 @@ export async function parseJD(
   jdText: string
 ): Promise<AxiosResponse<Response<ParsedJD>>> {
   return axiosInstance.post("/parse-jd", { jdText });
+}
+
+export async function hasAccess(
+  userId: string,
+  profileId: string
+): Promise<AxiosResponse<Response<ProfileAccess>>> {
+  return axiosInstance.get(
+    `/profile-access?id=${userId}&profileId=${profileId}`
+  );
 }

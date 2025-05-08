@@ -222,6 +222,37 @@ const Profile: React.FC = () => {
 
   const handleSave = () => {
     if (!editProfile) return;
+
+    // Name validation
+    if (!editProfile.name || !editProfile.name.trim()) {
+      setSnackbar({
+        open: true,
+        message: "Name is required",
+        severity: "error",
+      });
+      return;
+    }
+
+    // Phone number validation
+    if (!editProfile.phone || !editProfile.phone.toString().trim()) {
+      setSnackbar({
+        open: true,
+        message: "Phone number is required",
+        severity: "error",
+      });
+      return;
+    }
+
+    // Validate phone number format
+    if (!/^[0-9]{10}$/.test(editProfile.phone.toString())) {
+      setSnackbar({
+        open: true,
+        message: "Please enter a valid 10-digit phone number",
+        severity: "error",
+      });
+      return;
+    }
+
     // Local validation for required fields
     const errors = editProfile.experience.map((exp) => {
       const err: {
@@ -275,9 +306,16 @@ const Profile: React.FC = () => {
       })
     );
     updateProfile({
-      ...editProfile,
       id: userId,
+      name: editProfile.name,
+      role: editProfile.role,
+      email: editProfile.email,
+      about: editProfile.about,
+      experience: editProfile.experience,
+      skills: editProfile.skills,
       education: educationWithCurrentlyStudying,
+      driveLink: editProfile.driveLink,
+      phone: editProfile.phone?.toString(),
     });
   };
 

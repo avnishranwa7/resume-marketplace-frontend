@@ -58,9 +58,9 @@ export interface ProfileData {
   education: Education[];
   skills: string[];
   keywords: string[];
-  phone?: string;
+  phone?: number;
   yearsOfExperience?: number;
   immediatelyAvailable?: boolean;
   noticePeriod?: number;
-  resumeLink?: string;
+  driveLink?: string;
 }

@@ -3,6 +3,7 @@ import {
   getAvailableContacts,
   getProfile,
   getProfiles,
+  hasAccess,
   parseJD,
   parseResume,
   updateProfile,
@@ -145,3 +146,16 @@ export function useParseJD(
     },
   });
 }
+
+export const useHasAccess = (userId: string, profileId: string) => {
+  const queryFn = async () => {
+    const response = await hasAccess(userId, profileId);
+    return checkResponseSuccess(response);
+  };
+
+  return useQuery({
+    queryKey: ["has-access", userId, profileId],
+    queryFn,
+    enabled: !!userId && !!profileId,
+  });
+};
