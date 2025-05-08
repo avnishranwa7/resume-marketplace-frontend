@@ -291,7 +291,7 @@ const Home: React.FC = () => {
         </div>
         <div className="hero-image">
           <img
-            src="/src/assets/hero-illustration.svg"
+            src="/assets/hero-illustration.svg"
             alt="Find talent illustration"
           />
         </div>
