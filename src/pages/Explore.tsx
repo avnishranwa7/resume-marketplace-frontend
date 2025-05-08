@@ -215,12 +215,20 @@ const Explore = () => {
         severity: "success",
       });
     },
-    () => {
-      setSnackbar({
-        open: true,
-        message: "Failed to parse Job Description",
-        severity: "error",
-      });
+    (err: string) => {
+      if (err === "jwt must be provided") {
+        setSnackbar({
+          open: true,
+          message: "Must be logged in to analyze JD",
+          severity: "error",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Failed to parse Job Description",
+          severity: "error",
+        });
+      }
     }
   );
 
