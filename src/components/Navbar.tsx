@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
     setShowLogoutModal(false);
   };
 
-  const isRecruiter = localStorage.getItem("role") === "recruiter";
+  const isRecruiter = localStorage.getItem("role") === "recruiter"
 
   return (
     <nav className="navbar">
@@ -50,13 +50,15 @@ const Navbar: React.FC = () => {
           >
             Explore
           </Link>
-          <Link
-            to="/pricing"
-            className="navbar-item"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Pricing
-          </Link>
+          {(isRecruiter || !isLoggedIn) && (
+            <Link
+              to="/pricing"
+              className="navbar-item"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Pricing
+            </Link>
+          )}
           {isLoggedIn && isRecruiter && (
             <button
               className="navbar-item buy-contacts-btn"

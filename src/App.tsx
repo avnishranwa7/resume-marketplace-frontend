@@ -21,6 +21,7 @@ import BuyContacts from "./pages/BuyContacts";
 import ShippingAndDelivery from './pages/ShippingAndDelivery';
 import CancellationAndRefund from './pages/CancellationAndRefund';
 import ScrollToTop from './components/ScrollToTop';
+import ForgotPassword from "./pages/ForgotPassword";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -39,6 +40,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/activate-account" element={<ActivateAccount />} />
                 <Route
                   path="/complete-verification"
@@ -65,7 +67,7 @@ const App: React.FC = () => {
                 />
                 <Route path="/terms" element={<TermsAndConditions />} />
                 <Route path="/contact" element={<ContactUs />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/shipping" element={<ShippingAndDelivery />} />
                 <Route path="/refund" element={<CancellationAndRefund />} />
               </Routes>

@@ -511,7 +511,7 @@ const Explore = () => {
         >
           Reset
         </Button>
-        <Button
+        {localStorage.getItem('role') === 'recruiter' && <Button
           id="jdUploadBtn"
           variant="outlined"
           className={styles.jdUploadBtn}
@@ -528,14 +528,14 @@ const Explore = () => {
           }}
         >
           AI Talent Match
-        </Button>
+        </Button>}
       </div>
       <div className={styles.profileGrid}>
         {paginatedProfiles.length === 0 ? (
           <div className={styles.noResults}>
             {!appliedFilters.role
-              ? "Please select required filters."
-              : "No matching profiles. Please try different filters."}
+              ? "Please select required filters"
+              : "No matching profiles. Please try different filters"}
           </div>
         ) : (
           profiles.map((profile) => {
@@ -559,16 +559,16 @@ const Explore = () => {
                 <p className={styles.role}>{profile.role}</p>
                 <p className={styles.yoe}>{formatExperience(years, months)}</p>
                 <div className={styles.skillsList}>
-                  {profile.skills.slice(0, 3).map((skill, idx) => (
+                  {profile.skills.slice(0, 2).map((skill, idx) => (
                     <Chip
                       key={idx}
                       label={skill}
                       className={styles.skillChip}
                     />
                   ))}
-                  {profile.skills.length > 3 && (
+                  {profile.skills.length > 2 && (
                     <Chip
-                      label={`+${profile.skills.length - 3} more`}
+                      label={`+${profile.skills.length - 2} more`}
                       className={styles.skillChip}
                       sx={{
                         backgroundColor: "#e9effd !important",

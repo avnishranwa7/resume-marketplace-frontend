@@ -99,6 +99,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .skillChip {
@@ -110,13 +111,14 @@
 }
 
 .viewBtn {
-  margin-top: 0.75rem !important;
+  margin-top: auto !important;
   border-radius: 8px !important;
   border-color: #4361EE !important;
   color: #4361EE !important;
   text-transform: none !important;
   font-weight: 500;
   width: 100%;
+  max-width: 350px;
 }
 
 .pagination {

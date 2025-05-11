@@ -461,8 +461,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               <div
                 style={{ fontSize: "0.92rem", color: "#6c7a89", marginTop: 2 }}
               >
-                Make sure your Drive link is set to "Anyone with the link can
-                view".
+                Make sure your Drive link is publicly accessible
                 <div
                   style={{ color: "#d32f2f", fontWeight: 500, marginTop: 4 }}
                 >

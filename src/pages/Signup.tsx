@@ -93,11 +93,16 @@ const Signup: React.FC = () => {
   return (
     <div className="signup-container">
       <div className="signup-form">
-        <h1>Create Your Account</h1>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <img src="/favicon.svg" alt="Resume Marketplace Logo" style={{ height: 64, width: 64, marginBottom: 12 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#222b45', letterSpacing: 0.5 }}>RESUME</span>
+            <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#4361ee', letterSpacing: 0.5 }}>MARKETPLACE</span>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
             <input
               type="text"
               id="name"
@@ -105,11 +110,11 @@ const Signup: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               required
+              placeholder="Full Name"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
@@ -117,6 +122,7 @@ const Signup: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               required
+              placeholder="Email"
             />
             {errors.email && (
               <div className="error-message">{errors.email}</div>
@@ -124,7 +130,6 @@ const Signup: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
             <div style={{ position: "relative" }}>
               <input
                 type={showPassword ? "text" : "password"}
@@ -133,6 +138,7 @@ const Signup: React.FC = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                placeholder="Password"
               />
               <button
                 type="button"
@@ -162,7 +168,6 @@ const Signup: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
             <div style={{ position: "relative" }}>
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -171,6 +176,7 @@ const Signup: React.FC = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                placeholder="Confirm Password"
               />
               <button
                 type="button"
@@ -189,9 +195,7 @@ const Signup: React.FC = () => {
                   fontSize: "1rem",
                   padding: 0,
                 }}
-                aria-label={
-                  showConfirmPassword ? "Hide password" : "Show password"
-                }
+                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
               >
                 {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
               </button>
@@ -202,14 +206,15 @@ const Signup: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="role">I am a</label>
             <select
               id="role"
               name="role"
               value={formData.role}
               onChange={handleChange}
               required
+              style={{ color: formData.role ? '#222b45' : '#a0aec0' }}
             >
+              <option value="" disabled>I am a...</option>
               <option value="job_seeker">Job Seeker</option>
               <option value="recruiter">Recruiter</option>
             </select>
@@ -217,24 +222,24 @@ const Signup: React.FC = () => {
 
           <div className="terms-checkbox">
             <input type="checkbox" id="terms" required />
-            <label htmlFor="terms">
-              I agree to the{" "}
-              <Link to="/terms" target="_blank">
-                Terms and Conditions
-              </Link>
+            <label htmlFor="terms" style={{ fontSize: '0.97rem', color: '#6c757d' }}>
+              I agree to the
+              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#4361ee', margin: '0 0.25em' }}>Terms and Conditions</a>
+              and
+              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: '#4361ee', margin: '0 0.25em' }}>Privacy Policy</a>.
             </label>
           </div>
 
           {formData.role === "recruiter" && (
             <>
               <div className="form-group">
-                <label htmlFor="company.name">Company Name</label>
                 <input
                   type="text"
                   id="company.name"
                   name="company.name"
                   value={formData.company.name}
                   onChange={handleChange}
+                  placeholder="Company Name"
                 />
                 {errors["company.name"] && (
                   <div className="error-message">{errors["company.name"]}</div>
@@ -242,13 +247,13 @@ const Signup: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="company.website">Company Website</label>
                 <input
                   type="url"
                   id="company.website"
                   name="company.website"
                   value={formData.company.website}
                   onChange={handleChange}
+                  placeholder="Company Website"
                 />
                 {errors["company.website"] && (
                   <div className="error-message">
@@ -258,13 +263,13 @@ const Signup: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="company.industry">Industry</label>
                 <input
                   type="text"
                   id="company.industry"
                   name="company.industry"
                   value={formData.company.industry}
                   onChange={handleChange}
+                  placeholder="Industry"
                 />
                 {errors["company.industry"] && (
                   <div className="error-message">
@@ -274,14 +279,14 @@ const Signup: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="company.size">Company Size</label>
                 <select
                   id="company.size"
                   name="company.size"
                   value={formData.company.size}
                   onChange={handleChange}
+                  style={{ color: formData.company.size ? '#222b45' : '#a0aec0' }}
                 >
-                  <option value="">Select size</option>
+                  <option value="">Company Size</option>
                   <option value="1-10">1-10 employees</option>
                   <option value="11-50">11-50 employees</option>
                   <option value="51-200">51-200 employees</option>
@@ -295,13 +300,13 @@ const Signup: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="company.location">Company Location</label>
                 <input
                   type="text"
                   id="company.location"
                   name="company.location"
                   value={formData.company.location}
                   onChange={handleChange}
+                  placeholder="Company Location"
                 />
                 {errors["company.location"] && (
                   <div className="error-message">
@@ -318,8 +323,8 @@ const Signup: React.FC = () => {
         </form>
 
         <p className="login-link">
-          Already have an account?{" "}
-          <span onClick={() => navigate("/login")}>Login</span>
+          Already have an account?{' '}
+          <span onClick={() => navigate('/login')} style={{ color: '#4361ee', cursor: 'pointer', fontWeight: 500 }}>Login</span>
         </p>
       </div>
     </div>

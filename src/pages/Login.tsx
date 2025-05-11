@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import '../styles/Login.css';
 import { login } from '../api/auth';
 import Visibility from '@mui/icons-material/Visibility';
@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const Login: React.FC = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { login: authLogin } = useAuth();
   const [formData, setFormData] = useState({
@@ -57,7 +58,8 @@ const Login: React.FC = () => {
           if (data.role === 'job_seeker') {
             navigate('/profile');
           } else {
-            navigate('/explore');
+            const from = location.state?.from;
+            navigate(from ?? '/explore');
           }
         }, 1000);
       } else {
@@ -89,21 +91,17 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       <div className="login-content" style={{ justifyContent: 'center' }}>
-        {/* Minimal look: Only the login form, no illustration */}
         <div className="login-form">
-          <div className="form-header">
-            <h1>Welcome Back</h1>
-            <p>Enter your credentials to access your account</p>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <img src="/favicon.svg" alt="Resume Marketplace Logo" style={{ height: 64, width: 64, marginBottom: 12 }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#222b45', letterSpacing: 0.5 }}>RESUME</span>
+              <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#4361ee', letterSpacing: 0.5 }}>MARKETPLACE</span>
+            </div>
           </div>
           {success && <div className="success-message">{success}</div>}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <div className="input-wrapper-label">
-                <label htmlFor="email">Email</label>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M2.5 6.66669L9.0755 11.0504C9.63533 11.4236 10.3647 11.4236 10.9245 11.0504L17.5 6.66669M4.16667 15.8334H15.8333C16.7538 15.8334 17.5 15.0872 17.5 14.1667V5.83335C17.5 4.91288 16.7538 4.16669 15.8333 4.16669H4.16667C3.24619 4.16669 2.5 4.91288 2.5 5.83335V14.1667C2.5 15.0872 3.24619 15.8334 4.16667 15.8334Z" stroke="#4A5568" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
               <div className="input-wrapper">
                 <input
                   type="email"
@@ -120,12 +118,6 @@ const Login: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <div className="input-wrapper-label">
-                <label htmlFor="password">Password</label>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M13.3333 9.16669V6.66669C13.3333 4.82574 11.8409 3.33335 10 3.33335C8.15905 3.33335 6.66667 4.82574 6.66667 6.66669V9.16669M6.66667 9.16669H13.3333M6.66667 9.16669H5C4.07953 9.16669 3.33333 9.91288 3.33333 10.8334V15C3.33333 15.9205 4.07953 16.6667 5 16.6667H15C15.9205 16.6667 16.6667 15.9205 16.6667 15V10.8334C16.6667 9.91288 15.9205 9.16669 15 9.16669H13.3333" stroke="#4A5568" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-              </div>
               <div className="input-wrapper" style={{ position: 'relative' }}>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -162,7 +154,9 @@ const Login: React.FC = () => {
             </div>
 
             <div className="form-footer">
-              <a href="#" className="forgot-password">Forgot password?</a>
+              <Link to="/forgot-password" className="forgot-password" style={{ color: '#4361ee', textDecoration: 'none', fontSize: '0.95rem' }}>
+                Forgot password?
+              </Link>
             </div>
 
             {error && <div className="error-message">{error}</div>}
@@ -172,7 +166,13 @@ const Login: React.FC = () => {
           </form>
 
           <p className="signup-link">
-            Don't have an account? <span onClick={() => navigate('/signup')}>Sign up</span>
+            Don't have an account? <span onClick={() => navigate('/signup')} style={{ color: '#4361ee', cursor: 'pointer', fontWeight: 500 }}>Sign up</span>
+          </p>
+          <p style={{ textAlign: 'center', color: '#7f8c8d', fontSize: '0.95rem', marginTop: '1.5rem' }}>
+            By continuing, you accept our
+            <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#4361ee', margin: '0 0.25em' }}>Terms and Conditions</a>
+            and
+            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: '#4361ee', margin: '0 0.25em' }}>Privacy Policy</a>.
           </p>
         </div>
       </div>

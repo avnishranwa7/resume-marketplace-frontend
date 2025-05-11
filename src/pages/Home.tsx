@@ -177,7 +177,7 @@ const Home: React.FC = () => {
             <br />
             Talent, Instantly.
           </h1>
-          <p>Find thousands of candidates that match your requirements.</p>
+          <p>Find thousands of candidates that match your requirements</p>
 
           {/* Search Form */}
           <form className="search-form" onSubmit={handleSearch}>

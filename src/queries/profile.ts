@@ -42,6 +42,7 @@ export const useGetProfiles = (
     ],
     queryFn,
     enabled: !!role,
+    staleTime: 1 * 60 * 1000, // Data stays fresh for 1 minute
   });
 };
 
@@ -55,6 +56,7 @@ export const useGetProfile = (id: string, type: "id" | "userId") => {
     queryKey: ["profile", id],
     queryFn,
     enabled: !!id,
+    staleTime: Infinity
   });
 };
 

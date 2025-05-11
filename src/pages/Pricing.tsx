@@ -18,7 +18,7 @@ const Pricing: React.FC = () => {
         <h1>Pay Per Profile</h1>
         <p>
           View candidate profiles for free. Pay only when you want to contact
-          them.
+          them
         </p>
       </div>
 

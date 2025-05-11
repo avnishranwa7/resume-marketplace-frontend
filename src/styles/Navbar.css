@@ -95,6 +95,7 @@
 
 .login-btn:hover {
   background: #3730a3;
+  color: white;
 }
 
 .logout-btn {
@@ -110,6 +111,7 @@
 
 .logout-btn:hover {
   background: #b91c1c;
+  color: white;
 }
 
 .navbar-toggle {

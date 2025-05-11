@@ -4,7 +4,6 @@ import styles from "./Profile.module.css";
 import ProfileCard from "../components/ProfileCard";
 import { useGetProfile, useUpdateProfile } from "../queries/profile";
 import { ProfileData } from "../types";
-import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { ParsedResume } from "../types/responses";
@@ -20,8 +19,6 @@ const Profile: React.FC = () => {
       navigate("/explore", { replace: true });
     }
   }, [navigate]);
-
-  const queryClient = useQueryClient();
 
   const [editMode, setEditMode] = useState(false);
   const [editProfile, setEditProfile] = useState<ProfileData | undefined>();
@@ -42,16 +39,17 @@ const Profile: React.FC = () => {
     severity: AlertColor;
   }>({ open: false, message: "", severity: "info" });
 
-  const { data: profile, isLoading, error } = useGetProfile(userId, "userId");
+  const { data: profile, isLoading, error, refetch: refetchProfile } = useGetProfile(userId, "userId");
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile(
     () => {
-      queryClient.invalidateQueries({ queryKey: ["profile", userId] });
+      refetchProfile();
       setEditMode(false);
       setSnackbar({
         open: true,
         message: "Profile updated successfully.",
         severity: "success",
       });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   );
 
@@ -316,6 +314,8 @@ const Profile: React.FC = () => {
       education: educationWithCurrentlyStudying,
       driveLink: editProfile.driveLink,
       phone: editProfile.phone?.toString(),
+      immediatelyAvailable: editProfile.immediatelyAvailable,
+      noticePeriod: editProfile.noticePeriod,
     });
   };
 

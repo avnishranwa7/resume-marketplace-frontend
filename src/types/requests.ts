@@ -9,6 +9,8 @@ export interface UpdateProfileRequest {
   experience: Experience[];
   skills: string[];
   education: any[];
+  immediatelyAvailable?: boolean;
+  noticePeriod?: number;
   driveLink?: string;
   phone?: string;
 }
