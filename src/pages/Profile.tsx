@@ -8,14 +8,16 @@ import { useNavigate } from "react-router-dom";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { ParsedResume } from "../types/responses";
 import { Alert, AlertColor, Snackbar } from "@mui/material";
+import useAppSelector from "../hooks/useAppSelector";
 
 const Profile: React.FC = () => {
   useDocumentTitle("My Profile");
+  const auth = useAppSelector((state) => state.auth);
 
-  const userId = localStorage.getItem("userId") ?? "";
+  const userId = auth.userId ?? "";
   const navigate = useNavigate();
   useEffect(() => {
-    if (localStorage.getItem("role") === "recruiter") {
+    if (auth.role === "recruiter") {
       navigate("/explore", { replace: true });
     }
   }, [navigate]);
@@ -39,7 +41,12 @@ const Profile: React.FC = () => {
     severity: AlertColor;
   }>({ open: false, message: "", severity: "info" });
 
-  const { data: profile, isLoading, error, refetch: refetchProfile } = useGetProfile(userId, "userId");
+  const {
+    data: profile,
+    isLoading,
+    error,
+    refetch: refetchProfile,
+  } = useGetProfile(userId, "userId");
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile(
     () => {
       refetchProfile();
@@ -49,7 +56,7 @@ const Profile: React.FC = () => {
         message: "Profile updated successfully.",
         severity: "success",
       });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   );
 

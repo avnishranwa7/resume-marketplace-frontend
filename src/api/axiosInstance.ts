@@ -1,5 +1,6 @@
-import axios from 'axios';
-import baseUrl from './baseUrl';
+import axios from "axios";
+import baseUrl from "./baseUrl";
+import { store } from "../store";
 
 const axiosInstance = axios.create({
   baseURL: baseUrl,
@@ -8,18 +9,18 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     if (
-      config.url?.includes('/auth/login') ||
-      config.url?.includes('/auth/signup')
+      config.url?.includes("/auth/login") ||
+      config.url?.includes("/auth/signup")
     ) {
       return config;
     }
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['token'] = token;
+    const auth = store.getState().auth;
+    if (auth.token) {
+      config.headers["token"] = auth.token;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-export default axiosInstance; 
+export default axiosInstance;

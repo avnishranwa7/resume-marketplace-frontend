@@ -16,7 +16,8 @@ import {
 import { useMakePayment } from "../queries/payment";
 import axiosInstance from "../api/axiosInstance";
 import { useQueryClient } from "@tanstack/react-query";
-import useDocumentTitle from '../hooks/useDocumentTitle';
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import useAppSelector from "../hooks/useAppSelector";
 
 const PRICE_PER_CONTACT = 49;
 
@@ -38,6 +39,7 @@ async function displayRazorpay(
   amount: number,
   currency: string,
   orderId: string,
+  userId: string | null,
   navigate: () => void,
   onCancel: () => void
 ) {
@@ -58,7 +60,7 @@ async function displayRazorpay(
       ondismiss: async () => {
         try {
           await axiosInstance.post("/cancel-payment", {
-            userId: localStorage.getItem("userId"),
+            userId,
           });
           onCancel();
         } catch (err) {
@@ -69,7 +71,7 @@ async function displayRazorpay(
     handler: async function (response: any) {
       const res = await axiosInstance.post("/verify-payment", {
         orderId,
-        userId: localStorage.getItem("userId"),
+        userId,
         razorpayPaymentId: response.razorpay_payment_id,
         razorpaySignature: response.razorpay_signature,
       });
@@ -90,8 +92,9 @@ async function displayRazorpay(
 }
 
 const BuyContacts: React.FC = () => {
-  useDocumentTitle('Buy Contact Access');
-  
+  useDocumentTitle("Buy Contact Access");
+  const auth = useAppSelector((state) => state.auth);
+
   const navigate = useNavigate();
   const client = useQueryClient();
   const location = useLocation();
@@ -110,9 +113,10 @@ const BuyContacts: React.FC = () => {
       data.amount,
       data.currency,
       data.id,
+      auth.userId,
       () => {
         client.invalidateQueries({
-          queryKey: ["available-contacts", localStorage.getItem("userId")],
+          queryKey: ["available-contacts", auth.userId],
         });
         if (location.state?.id) {
           navigate(`/profile/${location.state.id}`, { replace: true });

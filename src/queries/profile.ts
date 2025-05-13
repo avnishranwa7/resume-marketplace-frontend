@@ -13,6 +13,7 @@ import { UpdateProfileRequest } from "../types/requests";
 import axiosInstance from "../api/axiosInstance";
 import { AxiosError } from "axios";
 import { ParsedJD, ParsedResume, Response } from "../types/responses";
+import useAppSelector from "../hooks/useAppSelector";
 
 export const useGetProfiles = (
   role: string,
@@ -47,8 +48,15 @@ export const useGetProfiles = (
 };
 
 export const useGetProfile = (id: string, type: "id" | "userId") => {
+  const auth = useAppSelector((state) => state.auth);
+
   const queryFn = async () => {
-    const response = await getProfile(id, type);
+    const response = await getProfile(
+      id,
+      type,
+      auth.role ?? "",
+      auth.userId ?? ""
+    );
     return checkResponseSuccess(response);
   };
 
@@ -56,20 +64,20 @@ export const useGetProfile = (id: string, type: "id" | "userId") => {
     queryKey: ["profile", id],
     queryFn,
     enabled: !!id,
-    staleTime: Infinity
+    staleTime: type === "userId" ? Infinity : 0.5 * 60 * 1000,
   });
 };
 
 export const useGetAvailableContacts = (role: string) => {
-  const id = localStorage.getItem("userId");
+  const auth = useAppSelector((state) => state.auth);
 
   const queryFn = async () => {
-    const response = await getAvailableContacts(id ?? "");
+    const response = await getAvailableContacts(auth.userId ?? "");
     return checkResponseSuccess(response);
   };
 
   return useQuery({
-    queryKey: ["available-contacts", id],
+    queryKey: ["available-contacts", auth.userId],
     queryFn,
     enabled: role !== "job_seeker",
   });

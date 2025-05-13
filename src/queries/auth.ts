@@ -48,12 +48,12 @@ export const useResetPassword = (
     token: string;
     email: string;
   }) => {
-    const response = await resetPassword(
-      payload.password,
-      payload.confirmPassword,
-      payload.token,
-      payload.email
-    );
+    const response = await resetPassword({
+      password: payload.password,
+      confirmPassword: payload.confirmPassword,
+      token: payload.token,
+      email: payload.email,
+    });
     return response;
   };
 

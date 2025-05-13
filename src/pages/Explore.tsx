@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import useAppSelector from "../hooks/useAppSelector";
 
 const mockProfiles = [
   {
@@ -162,6 +163,7 @@ const formatExperience = (years: number, months: number): string => {
 
 const Explore = () => {
   useDocumentTitle("Explore Profiles");
+  const auth = useAppSelector((state) => state.auth);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
@@ -511,24 +513,26 @@ const Explore = () => {
         >
           Reset
         </Button>
-        {localStorage.getItem('role') === 'recruiter' && <Button
-          id="jdUploadBtn"
-          variant="outlined"
-          className={styles.jdUploadBtn}
-          onClick={handleJdModalOpen}
-          startIcon={<AutoAwesomeIcon />}
-          sx={{
-            borderColor: "#4361EE",
-            color: "#4361EE",
-            fontWeight: 500,
-            textTransform: "none",
-            borderRadius: "8px",
-            minWidth: "180px",
-            marginLeft: "auto",
-          }}
-        >
-          AI Talent Match
-        </Button>}
+        {auth.role === "recruiter" && (
+          <Button
+            id="jdUploadBtn"
+            variant="outlined"
+            className={styles.jdUploadBtn}
+            onClick={handleJdModalOpen}
+            startIcon={<AutoAwesomeIcon />}
+            sx={{
+              borderColor: "#4361EE",
+              color: "#4361EE",
+              fontWeight: 500,
+              textTransform: "none",
+              borderRadius: "8px",
+              minWidth: "180px",
+              marginLeft: "auto",
+            }}
+          >
+            AI Talent Match
+          </Button>
+        )}
       </div>
       <div className={styles.profileGrid}>
         {paginatedProfiles.length === 0 ? (

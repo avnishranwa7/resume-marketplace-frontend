@@ -44,7 +44,6 @@ const ResetPassword = () => {
       setLinkValid(true);
     },
     (err) => {
-      console.log(err);
       setSnackbar({
         open: true,
         message: err,

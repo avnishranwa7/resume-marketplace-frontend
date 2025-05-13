@@ -1,46 +1,66 @@
-import axios, { AxiosResponse } from "axios";
-import baseUrl from "./baseUrl";
+import { AxiosResponse } from "axios";
 import { Response } from "../types/responses";
 import axiosInstance from "./axiosInstance";
 
-export async function login(email: string, password: string) {
-  const response = await axios.post(`${baseUrl}/auth/login`, {
-    email,
-    password,
+interface LoginResponse {
+  token: string;
+  role: string;
+  userId: string;
+}
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
+  const response = await axiosInstance.post("/auth/login", data);
+  return response.data;
+};
+
+export const signupUser = async (data: any) => {
+  const response = await axiosInstance.post("/auth/signup", data);
+  return response.data;
+};
+
+export const forgotPassword = async (email: string) => {
+  const response = await axiosInstance.post("/auth/forgot-password", { email });
+  return response.data;
+};
+
+export const resetPassword = async (data: {
+  token: string;
+  password: string;
+  confirmPassword: string;
+  email: string;
+}) => {
+  const response = await axiosInstance.post("/auth/reset-password", data);
+  return response.data;
+};
+
+export const activateAccount = async (token: string) => {
+  const response = await axiosInstance.post("/auth/activate-account", {
+    token,
   });
   return response.data;
-}
+};
 
-export async function signup(formData: any) {
-  const response = await axios.put(`${baseUrl}/auth/signup`, formData);
+export const completeVerification = async (data: {
+  token: string;
+  otp: string;
+}) => {
+  const response = await axiosInstance.post(
+    "/auth/complete-verification",
+    data
+  );
   return response.data;
-}
-
-export async function forgotPassword(
-  email: string
-): Promise<AxiosResponse<Response<any>>> {
-  return axiosInstance.post("/auth/forgot-password", { email });
-}
+};
 
 export async function verifyPasswordLink(
   token: string,
   email: string
 ): Promise<AxiosResponse<Response<any>>> {
   return axiosInstance.post("/auth/verify-password-link", {
-    token,
-    email,
-  });
-}
-
-export async function resetPassword(
-  password: string,
-  confirmPassword: string,
-  token: string,
-  email: string
-): Promise<AxiosResponse<Response<any>>> {
-  return axiosInstance.post("/auth/reset-password", {
-    password,
-    confirmPassword,
     token,
     email,
   });

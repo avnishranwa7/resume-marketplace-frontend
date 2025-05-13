@@ -29,9 +29,12 @@ export async function updateProfile(
 
 export async function getProfile(
   id: string,
-  type: "id" | "userId"
+  type: "id" | "userId",
+  role: string,
+  userId: string
 ): Promise<AxiosResponse<Response<ProfileData>>> {
-  return axiosInstance.get(`/profile?${type}=${id}`);
+  const from = role === "job_seeker" ? undefined : userId;
+  return axiosInstance.get(`/profile?${type}=${id}&from=${from}`);
 }
 
 export async function getAvailableContacts(

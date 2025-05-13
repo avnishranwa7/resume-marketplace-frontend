@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/Signup.css";
-import { signup } from "../api/auth";
+import { signupUser } from "../api/auth";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Link } from "react-router-dom";
-import useDocumentTitle from '../hooks/useDocumentTitle';
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import useAppSelector from "../hooks/useAppSelector";
 
 const Signup: React.FC = () => {
-  useDocumentTitle('Sign Up');
+  useDocumentTitle("Sign Up");
+  const auth = useAppSelector((state) => state.auth);
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const Signup: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    if (auth.token) {
       navigate("/profile");
     }
   }, [navigate]);
@@ -69,7 +70,7 @@ const Signup: React.FC = () => {
       if (payload.role === "job_seeker" && "company" in payload) {
         delete payload.company;
       }
-      await signup(payload);
+      await signupUser(payload);
       navigate("/activate-account");
     } catch (err: any) {
       // Parse error response
@@ -93,11 +94,40 @@ const Signup: React.FC = () => {
   return (
     <div className="signup-container">
       <div className="signup-form">
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <img src="/favicon.svg" alt="Resume Marketplace Logo" style={{ height: 64, width: 64, marginBottom: 12 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#222b45', letterSpacing: 0.5 }}>RESUME</span>
-            <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#4361ee', letterSpacing: 0.5 }}>MARKETPLACE</span>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <img
+            src="/favicon.svg"
+            alt="Resume Marketplace Logo"
+            style={{ height: 64, width: 64, marginBottom: 12 }}
+          />
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <span
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: 700,
+                color: "#222b45",
+                letterSpacing: 0.5,
+              }}
+            >
+              RESUME
+            </span>
+            <span
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: 700,
+                color: "#4361ee",
+                letterSpacing: 0.5,
+              }}
+            >
+              MARKETPLACE
+            </span>
           </div>
         </div>
 
@@ -195,7 +225,9 @@ const Signup: React.FC = () => {
                   fontSize: "1rem",
                   padding: 0,
                 }}
-                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                aria-label={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
               >
                 {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
               </button>
@@ -212,9 +244,11 @@ const Signup: React.FC = () => {
               value={formData.role}
               onChange={handleChange}
               required
-              style={{ color: formData.role ? '#222b45' : '#a0aec0' }}
+              style={{ color: formData.role ? "#222b45" : "#a0aec0" }}
             >
-              <option value="" disabled>I am a...</option>
+              <option value="" disabled>
+                I am a...
+              </option>
               <option value="job_seeker">Job Seeker</option>
               <option value="recruiter">Recruiter</option>
             </select>
@@ -222,11 +256,29 @@ const Signup: React.FC = () => {
 
           <div className="terms-checkbox">
             <input type="checkbox" id="terms" required />
-            <label htmlFor="terms" style={{ fontSize: '0.97rem', color: '#6c757d' }}>
+            <label
+              htmlFor="terms"
+              style={{ fontSize: "0.97rem", color: "#6c757d" }}
+            >
               I agree to the
-              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#4361ee', margin: '0 0.25em' }}>Terms and Conditions</a>
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#4361ee", margin: "0 0.25em" }}
+              >
+                Terms and Conditions
+              </a>
               and
-              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: '#4361ee', margin: '0 0.25em' }}>Privacy Policy</a>.
+              <a
+                href="/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#4361ee", margin: "0 0.25em" }}
+              >
+                Privacy Policy
+              </a>
+              .
             </label>
           </div>
 
@@ -284,7 +336,9 @@ const Signup: React.FC = () => {
                   name="company.size"
                   value={formData.company.size}
                   onChange={handleChange}
-                  style={{ color: formData.company.size ? '#222b45' : '#a0aec0' }}
+                  style={{
+                    color: formData.company.size ? "#222b45" : "#a0aec0",
+                  }}
                 >
                   <option value="">Company Size</option>
                   <option value="1-10">1-10 employees</option>
@@ -323,8 +377,13 @@ const Signup: React.FC = () => {
         </form>
 
         <p className="login-link">
-          Already have an account?{' '}
-          <span onClick={() => navigate('/login')} style={{ color: '#4361ee', cursor: 'pointer', fontWeight: 500 }}>Login</span>
+          Already have an account?{" "}
+          <span
+            onClick={() => navigate("/login")}
+            style={{ color: "#4361ee", cursor: "pointer", fontWeight: 500 }}
+          >
+            Login
+          </span>
         </p>
       </div>
     </div>

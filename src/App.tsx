@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "./store";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -15,7 +17,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import "./App.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ActivateAccount from "./pages/ActivateAccount";
-import { AuthProvider } from "./context/AuthContext";
 import CompleteVerification from "./pages/CompleteVerification";
 import BuyContacts from "./pages/BuyContacts";
 import ShippingAndDelivery from "./pages/ShippingAndDelivery";
@@ -23,17 +24,16 @@ import CancellationAndRefund from "./pages/CancellationAndRefund";
 import ScrollToTop from "./components/ScrollToTop";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <ScrollToTop />
-        <AuthProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <ScrollToTop />
           <div className="app">
             <Navbar />
             <main className="main-content">
@@ -76,9 +76,9 @@ const App: React.FC = () => {
             </main>
             <Footer />
           </div>
-        </AuthProvider>
-      </Router>
-    </QueryClientProvider>
+        </Router>
+      </QueryClientProvider>
+    </Provider>
   );
 };
 

@@ -21,9 +21,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { Alert, AlertColor, Box, Typography } from "@mui/material";
+import useAppSelector from "../hooks/useAppSelector";
 
 const ProfileView = () => {
-  const role = localStorage.getItem("role");
+  const auth = useAppSelector((state) => state.auth);
+  const role = auth.role;
 
   const { id } = useParams();
   const nav = useNavigate();
@@ -50,12 +52,12 @@ const ProfileView = () => {
   const { data: profile, isLoading, error } = useGetProfile(id ?? "", "id");
   const { data: availableContacts } = useGetAvailableContacts(role ?? "");
   const { data: accessData, refetch: refetchAccess } = useHasAccess(
-    localStorage.getItem("userId") ?? "",
+    auth.userId ?? "",
     profile?._id ?? ""
   );
 
   const fetchContactInfo = async () => {
-    const userId = localStorage.getItem("userId");
+    const userId = auth.userId;
     if (!userId || !profile) return;
     try {
       const res = await axiosInstance.get(
@@ -119,7 +121,7 @@ const ProfileView = () => {
     }
 
     // If all data is available, proceed directly with unlock
-    const userId = localStorage.getItem("userId") || "";
+    const userId = auth.userId || "";
     const profileId = profile._id;
     unlockProfileMutation.mutate(
       { userId, profileId },
@@ -152,7 +154,7 @@ const ProfileView = () => {
 
   const handleConfirmUnlock = () => {
     if (!profile) return;
-    const userId = localStorage.getItem("userId") || "";
+    const userId = auth.userId || "";
     const profileId = profile._id;
     unlockProfileMutation.mutate(
       { userId, profileId },
