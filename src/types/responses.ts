@@ -56,3 +56,13 @@ export interface ProfileAccess {
     driveLink: boolean;
   };
 }
+
+export interface Notification {
+  id: string;
+  to: string;
+  message: string;
+  type: "profile_view" | "contact_access"
+  seen: boolean;
+  createdAt: string;
+  company: string;
+}

@@ -6,11 +6,11 @@ import axiosInstance from "./axiosInstance";
 export async function makePayment(
   amount: number,
   contactCount: number,
-  token: string
+  userId: string
 ): Promise<AxiosResponse<Response<Order>>> {
   return axiosInstance.post("/payment", {
     amount,
     contactCount,
-    userId: token,
+    userId,
   });
 }

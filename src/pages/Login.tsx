@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../store/slices/authSlice";
-import { addNotification } from "../store/slices/notificationsSlice";
 import { loginUser } from "../api/auth";
 import "../styles/Login.css";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -37,14 +36,6 @@ const Login: React.FC = () => {
           token: response.token,
           role: response.role,
           userId: response.userId,
-        })
-      );
-
-      // Add welcome notification
-      dispatch(
-        addNotification({
-          message: `Welcome back! You've successfully logged in.`,
-          type: "message",
         })
       );
 

@@ -12,16 +12,9 @@ import {
 import Radio from "@mui/material/Radio";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
-import { io } from "socket.io-client";
-import baseUrl from "../api/baseUrl";
-import useAppSelector from "../hooks/useAppSelector";
-import useAppDispatch from "../hooks/useAppDispatch";
-import { addNotification } from "../store/slices/notificationsSlice";
 
 const Home: React.FC = () => {
   useDocumentTitle("Home");
-  const auth = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -48,26 +41,6 @@ const Home: React.FC = () => {
     "Business Analyst",
     "Software Developer",
   ];
-
-  useEffect(() => {
-    const socket = io(baseUrl);
-
-    if (auth.token && auth.role === "job_seeker") {
-      socket.on("notification", (data) => {
-        if (data.to === auth.userId) {
-          const company = data?.company?.name ?? "";
-          const message = `A recruiter from ${
-            company ?? "a company"
-          } has viewed your profile`;
-          dispatch(addNotification({ message, type: data.type }));
-        }
-      });
-    }
-
-    return () => {
-      socket.off();
-    };
-  }, []);
 
   // On mount, read filters from URL
   useEffect(() => {

@@ -1,19 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface Notification {
-  id: string;
-  message: string;
-  type: "profile_view" | "contact_access" | "message";
-  read: boolean;
-  createdAt: string;
-}
+import { Notification } from "../../types/responses";
 
 interface NotificationsState {
   notifications: Notification[];
 }
 
 const initialState: NotificationsState = {
-  notifications: JSON.parse(localStorage.getItem("notifications") || "[]"),
+  notifications: [],
 };
 
 const notificationsSlice = createSlice({
@@ -22,26 +15,17 @@ const notificationsSlice = createSlice({
   reducers: {
     addNotification: (
       state,
-      action: PayloadAction<Omit<Notification, "id" | "read" | "createdAt">>
+      action: PayloadAction<Notification>
     ) => {
-      const newNotification: Notification = {
-        ...action.payload,
-        id: Math.random().toString(36).substr(2, 9),
-        read: false,
-        createdAt: new Date().toISOString(),
-      };
+      const newNotification: Notification = action.payload;
       state.notifications.unshift(newNotification);
-      localStorage.setItem(
-        "notifications",
-        JSON.stringify(state.notifications)
-      );
     },
     markAsRead: (state, action: PayloadAction<string>) => {
       const notification = state.notifications.find(
         (n) => n.id === action.payload
       );
       if (notification) {
-        notification.read = true;
+        notification.seen = true;
         localStorage.setItem(
           "notifications",
           JSON.stringify(state.notifications)
@@ -50,7 +34,7 @@ const notificationsSlice = createSlice({
     },
     markAllAsRead: (state) => {
       state.notifications.forEach((notification) => {
-        notification.read = true;
+        notification.seen = true;
       });
       localStorage.setItem(
         "notifications",
@@ -69,6 +53,6 @@ export const selectNotifications = (state: {
 }) => state.notifications.notifications;
 export const selectUnreadCount = (state: {
   notifications: NotificationsState;
-}) => state.notifications.notifications.filter((n) => !n.read).length;
+}) => state.notifications.notifications.filter((n) => !n.seen).length;
 
 export default notificationsSlice.reducer;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store";
@@ -25,58 +25,113 @@ import ScrollToTop from "./components/ScrollToTop";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import useAppSelector from "./hooks/useAppSelector";
+import { useGetNotifications } from "./queries/notification";
+import { addNotification } from "./store/slices/notificationsSlice";
+import useAppDispatch from "./hooks/useAppDispatch";
+import baseUrl from "./api/baseUrl";
+import { io } from "socket.io-client";
 
 const queryClient = new QueryClient();
+
+const RouterComponent = () => {
+  const auth = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const {data: notificationsData} = useGetNotifications();
+
+  useEffect(() => {
+    const socket = io(baseUrl);
+
+    if (auth.token && auth.role === "job_seeker") {
+      socket.on("notification", (data) => {
+        if (data.to === auth.userId) {
+          const company = data?.company ?? "";
+          const message = `A recruiter from ${
+            company ?? "a company"
+          } has viewed your profile`;
+          dispatch(
+            addNotification({
+              id: data.id,
+              message,
+              type: data.type,
+              to: data.to,
+              seen: data.seen,
+              company: data.company,
+              createdAt: data.createdAt,
+            })
+          );
+        }
+      });
+    }
+
+    return () => {
+      socket.off();
+    };
+  }, [])
+
+  useEffect(() => {
+    if(notificationsData) {
+      notificationsData.forEach((notification) => {
+        const message = `A recruiter from ${
+          notification.company ?? "a company"
+        } has viewed your profile`;
+        dispatch(addNotification({...notification, message}));
+      });
+    }
+  }, [notificationsData]);
+  
+  return <Router>
+  <ScrollToTop />
+  <div className="app">
+    <Navbar />
+    <main className="main-content">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/activate-account" element={<ActivateAccount />} />
+        <Route
+          path="/complete-verification"
+          element={<CompleteVerification />}
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/profile/:id" element={<ProfileView />} />
+        <Route
+          path="/buy-contacts"
+          element={
+            <ProtectedRoute>
+              <BuyContacts />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/terms" element={<TermsAndConditions />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/shipping" element={<ShippingAndDelivery />} />
+        <Route path="/refund" element={<CancellationAndRefund />} />
+      </Routes>
+    </main>
+    <Footer />
+  </div>
+</Router>
+};
 
 const App: React.FC = () => {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <Router>
-          <ScrollToTop />
-          <div className="app">
-            <Navbar />
-            <main className="main-content">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/activate-account" element={<ActivateAccount />} />
-                <Route
-                  path="/complete-verification"
-                  element={<CompleteVerification />}
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/explore" element={<Explore />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/profile/:id" element={<ProfileView />} />
-                <Route
-                  path="/buy-contacts"
-                  element={
-                    <ProtectedRoute>
-                      <BuyContacts />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/terms" element={<TermsAndConditions />} />
-                <Route path="/contact" element={<ContactUs />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/shipping" element={<ShippingAndDelivery />} />
-                <Route path="/refund" element={<CancellationAndRefund />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
+        <RouterComponent />
       </QueryClientProvider>
     </Provider>
   );

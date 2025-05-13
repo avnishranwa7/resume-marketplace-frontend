@@ -13,14 +13,18 @@ import "../styles/Navbar.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Badge, Menu, MenuItem, Typography, Box, Divider } from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
-import EmailIcon from "@mui/icons-material/Email";
 import WorkIcon from "@mui/icons-material/Work";
 import PersonIcon from "@mui/icons-material/Person";
 import InfoIcon from "@mui/icons-material/Info";
+import { useMarkNotificationsAsSeen } from "../queries/notification";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const {mutate: markNotificationsAsSeen} = useMarkNotificationsAsSeen(() => {
+    dispatch(markAllAsRead());
+  }, () => {});
 
   // Get state from Redux
   const { token, role } = useSelector((state: RootState) => state.auth);
@@ -68,7 +72,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleMarkAllAsRead = () => {
-    dispatch(markAllAsRead());
+    markNotificationsAsSeen(notifications.map((notification) => notification.id));
   };
 
   // Close notification menu when clicking outside
@@ -284,13 +288,10 @@ const Navbar: React.FC = () => {
             let icon = <InfoIcon />;
             let iconColor = "#4361ee";
 
-            if (notification.type === "message") {
-              icon = <EmailIcon />;
-              iconColor = "#2ecc71";
-            } else if (notification.type === "contact_access") {
+            if (notification.type === "contact_access") {
               icon = <WorkIcon />;
               iconColor = "#e74c3c";
-            } else if (notification.type === "profile_view") {
+            } else {
               icon = <PersonIcon />;
               iconColor = "#9b59b6";
             }
@@ -300,7 +301,7 @@ const Navbar: React.FC = () => {
                 key={notification.id}
                 onClick={() => handleNotificationItemClick(notification.id)}
                 sx={{
-                  backgroundColor: notification.read ? "inherit" : "#f8f9ff",
+                  backgroundColor: notification.seen ? "inherit" : "#f8f9ff",
                   display: "flex",
                   alignItems: "flex-start",
                   gap: 1,
@@ -336,8 +337,8 @@ const Navbar: React.FC = () => {
                     variant="body2"
                     sx={{
                       mb: 0.5,
-                      color: notification.read ? "#666" : "#333",
-                      fontWeight: notification.read ? 400 : 500,
+                      color: notification.seen ? "#666" : "#333",
+                      fontWeight: notification.seen ? 400 : 500,
                     }}
                   >
                     {notification.message}
@@ -354,7 +355,7 @@ const Navbar: React.FC = () => {
                     })}
                   </Typography>
                 </Box>
-                {!notification.read && (
+                {!notification.seen && (
                   <Box
                     sx={{
                       width: "8px",
