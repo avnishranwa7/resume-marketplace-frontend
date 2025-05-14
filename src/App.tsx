@@ -37,7 +37,8 @@ const queryClient = new QueryClient();
 const RouterComponent = () => {
   const auth = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const {data: notificationsData} = useGetNotifications();
+
+  const { data: notificationsData } = useGetNotifications();
 
   useEffect(() => {
     const socket = io(baseUrl);
@@ -46,9 +47,12 @@ const RouterComponent = () => {
       socket.on("notification", (data) => {
         if (data.to === auth.userId) {
           const company = data?.company ?? "";
-          const message = `A recruiter from ${
-            company ?? "a company"
-          } has viewed your profile`;
+          const message = `A recruiter from ${company ?? "a company"} has ${
+            data.type === "profile_view"
+              ? "viewed your profile"
+              : "unlocked your contact information"
+          }`;
+
           dispatch(
             addNotification({
               id: data.id,
@@ -67,64 +71,69 @@ const RouterComponent = () => {
     return () => {
       socket.off();
     };
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if(notificationsData) {
+    if (notificationsData) {
       notificationsData.forEach((notification) => {
-        const message = `A recruiter from ${
-          notification.company ?? "a company"
-        } has viewed your profile`;
-        dispatch(addNotification({...notification, message}));
+        const company = notification.company;
+        const message = `A recruiter from ${company ?? "a company"} has ${
+          notification.type === "profile_view"
+            ? "viewed your profile"
+            : "unlocked your contact information"
+        }`;
+        dispatch(addNotification({ ...notification, message }));
       });
     }
   }, [notificationsData]);
-  
-  return <Router>
-  <ScrollToTop />
-  <div className="app">
-    <Navbar />
-    <main className="main-content">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/activate-account" element={<ActivateAccount />} />
-        <Route
-          path="/complete-verification"
-          element={<CompleteVerification />}
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/profile/:id" element={<ProfileView />} />
-        <Route
-          path="/buy-contacts"
-          element={
-            <ProtectedRoute>
-              <BuyContacts />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/terms" element={<TermsAndConditions />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/shipping" element={<ShippingAndDelivery />} />
-        <Route path="/refund" element={<CancellationAndRefund />} />
-      </Routes>
-    </main>
-    <Footer />
-  </div>
-</Router>
+
+  return (
+    <Router>
+      <ScrollToTop />
+      <div className="app">
+        <Navbar />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/activate-account" element={<ActivateAccount />} />
+            <Route
+              path="/complete-verification"
+              element={<CompleteVerification />}
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/profile/:id" element={<ProfileView />} />
+            <Route
+              path="/buy-contacts"
+              element={
+                <ProtectedRoute>
+                  <BuyContacts />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/terms" element={<TermsAndConditions />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/shipping" element={<ShippingAndDelivery />} />
+            <Route path="/refund" element={<CancellationAndRefund />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
+  );
 };
 
 const App: React.FC = () => {

@@ -6,12 +6,21 @@ import { logout } from "../store/slices/authSlice";
 import {
   selectNotifications,
   selectUnreadCount,
-  markAsRead,
   markAllAsRead,
 } from "../store/slices/notificationsSlice";
 import "../styles/Navbar.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Badge, Menu, MenuItem, Typography, Box, Divider } from "@mui/material";
+import {
+  Badge,
+  Menu,
+  MenuItem,
+  Typography,
+  Box,
+  Divider,
+  AlertColor,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
 import WorkIcon from "@mui/icons-material/Work";
 import PersonIcon from "@mui/icons-material/Person";
@@ -21,10 +30,6 @@ import { useMarkNotificationsAsSeen } from "../queries/notification";
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const {mutate: markNotificationsAsSeen} = useMarkNotificationsAsSeen(() => {
-    dispatch(markAllAsRead());
-  }, () => {});
 
   // Get state from Redux
   const { token, role } = useSelector((state: RootState) => state.auth);
@@ -36,6 +41,20 @@ const Navbar: React.FC = () => {
   const [notificationAnchorEl, setNotificationAnchorEl] =
     useState<null | HTMLElement>(null);
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: AlertColor;
+  }>({ open: false, message: "", severity: "info" });
+
+  const { mutate: markNotificationsAsSeen } = useMarkNotificationsAsSeen(
+    () => {
+      dispatch(markAllAsRead());
+    },
+    (error) => {
+      setSnackbar({ open: true, message: error, severity: "error" });
+    }
+  );
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -66,13 +85,10 @@ const Navbar: React.FC = () => {
     setNotificationAnchorEl(null);
   };
 
-  const handleNotificationItemClick = (id: string) => {
-    dispatch(markAsRead(id));
-    // Add navigation logic based on notification type
-  };
-
   const handleMarkAllAsRead = () => {
-    markNotificationsAsSeen(notifications.map((notification) => notification.id));
+    markNotificationsAsSeen(
+      notifications.map((notification) => notification.id)
+    );
   };
 
   // Close notification menu when clicking outside
@@ -299,7 +315,6 @@ const Navbar: React.FC = () => {
             return (
               <MenuItem
                 key={notification.id}
-                onClick={() => handleNotificationItemClick(notification.id)}
                 sx={{
                   backgroundColor: notification.seen ? "inherit" : "#f8f9ff",
                   display: "flex",
@@ -390,6 +405,19 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       )}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </nav>
   );
 };

@@ -83,7 +83,8 @@
 }
 
 .navbar-item[href="/explore"],
-.navbar-item[href="/profile"] {
+.navbar-item[href="/profile"],
+.navbar-item[href="/pricing"] {
   font-size: 1.08rem;
   font-weight: 500;
 }
