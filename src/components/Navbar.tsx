@@ -171,10 +171,18 @@ const Navbar: React.FC = () => {
                 backgroundColor: "transparent",
                 border: "none",
                 cursor: "pointer",
-                transition: "all 0.2s ease",
+                transition: "all 0.3s ease",
                 borderRadius: "50%",
-                width: "36px",
-                height: "36px",
+                width: "40px",
+                height: "40px",
+                padding: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor =
+                  "rgba(67, 97, 238, 0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
               }}
             >
               <Badge
@@ -184,24 +192,32 @@ const Navbar: React.FC = () => {
                   "& .MuiBadge-badge": {
                     backgroundColor: "#4361ee",
                     color: "white",
-                    fontSize: "0.65rem",
-                    fontWeight: "bold",
-                    minWidth: "16px",
-                    height: "16px",
-                    borderRadius: "8px",
-                    padding: "0 4px",
-                    right: 2,
+                    fontSize: "0.7rem",
+                    fontWeight: "600",
+                    minWidth: "18px",
+                    height: "18px",
+                    borderRadius: "9px",
+                    padding: "0 6px",
+                    right: 0,
                     top: 2,
+                    border: "2px solid #fff",
+                    transform: "scale(1) translate(25%, -25%)",
+                    transformOrigin: "100% 0%",
+                    transition: "transform 0.2s ease-in-out",
+                    "&:empty": {
+                      display: "none",
+                    },
                   },
                 }}
               >
                 <NotificationsIcon
                   sx={{
                     color: "#4361ee",
-                    fontSize: "1.35rem",
-                    transition: "transform 0.2s ease",
+                    fontSize: "1.5rem",
+                    transition: "transform 0.2s ease, color 0.2s ease",
                     "&:hover": {
                       transform: "scale(1.1)",
+                      color: "#2541df",
                     },
                   }}
                 />
