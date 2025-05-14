@@ -5,6 +5,7 @@ import { login } from "../store/slices/authSlice";
 import { loginUser } from "../api/auth";
 import "../styles/Login.css";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Login: React.FC = () => {
   useDocumentTitle("Login");
@@ -16,6 +17,7 @@ const Login: React.FC = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -107,7 +109,7 @@ const Login: React.FC = () => {
             <div className="form-group">
               <div className="input-wrapper" style={{ position: "relative" }}>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   placeholder="Enter your password"
@@ -116,6 +118,27 @@ const Login: React.FC = () => {
                   required
                   disabled={isLoading}
                 />
+                <button
+                  type="button"
+                  className="show-password-btn"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={-1}
+                  style={{
+                    position: "absolute",
+                    right: "0.75rem",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#4361EE",
+                    fontSize: "1.35rem",
+                    padding: 0
+                  }}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </button>
               </div>
             </div>
 

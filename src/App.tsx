@@ -38,12 +38,14 @@ const RouterComponent = () => {
   const auth = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
-  const { data: notificationsData } = useGetNotifications();
+  const { data: notificationsData, refetch: refetchNotifications } = useGetNotifications();
 
   useEffect(() => {
     const socket = io(baseUrl);
 
     if (auth.token && auth.role === "job_seeker") {
+      refetchNotifications();
+      
       socket.on("notification", (data) => {
         if (data.to === auth.userId) {
           const company = data?.company ?? "";
@@ -71,7 +73,8 @@ const RouterComponent = () => {
     return () => {
       socket.off();
     };
-  }, []);
+  }, [auth]);
+  
 
   useEffect(() => {
     if (notificationsData) {

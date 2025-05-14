@@ -22,10 +22,14 @@ const notificationsSlice = createSlice({
         notification.seen = true;
       });
     },
+    clearNotifications: (state) => {
+      state.notifications = [];
+    },
   },
 });
 
-export const { addNotification, markAllAsRead } = notificationsSlice.actions;
+export const { addNotification, markAllAsRead, clearNotifications } =
+  notificationsSlice.actions;
 
 // Selectors
 export const selectNotifications = (state: {

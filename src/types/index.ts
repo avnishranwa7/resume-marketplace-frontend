@@ -43,8 +43,6 @@ export interface Experience {
 export interface Project {
   name: string;
   description: string;
-  technologies: string[];
-  link?: string;
 }
 
 export interface ProfileData {
@@ -56,6 +54,7 @@ export interface ProfileData {
   about: string;
   experience: Experience[];
   education: Education[];
+  projects: Project[];
   skills: string[];
   keywords: string[];
   phone?: number;

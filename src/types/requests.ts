@@ -1,4 +1,4 @@
-import { Experience } from ".";
+import { Experience, Project } from ".";
 
 export interface UpdateProfileRequest {
   id: string;
@@ -7,6 +7,7 @@ export interface UpdateProfileRequest {
   email: string;
   about: string;
   experience: Experience[];
+  projects: Project[];
   skills: string[];
   education: any[];
   immediatelyAvailable?: boolean;

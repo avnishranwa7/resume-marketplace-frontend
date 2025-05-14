@@ -7,6 +7,7 @@ import {
   selectNotifications,
   selectUnreadCount,
   markAllAsRead,
+  clearNotifications,
 } from "../store/slices/notificationsSlice";
 import "../styles/Navbar.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -26,10 +27,12 @@ import WorkIcon from "@mui/icons-material/Work";
 import PersonIcon from "@mui/icons-material/Person";
 import InfoIcon from "@mui/icons-material/Info";
 import { useMarkNotificationsAsSeen } from "../queries/notification";
-
+import useAppDispatch from "../hooks/useAppDispatch";
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const appDispatch = useAppDispatch();
 
   // Get state from Redux
   const { token, role } = useSelector((state: RootState) => state.auth);
@@ -66,6 +69,7 @@ const Navbar: React.FC = () => {
 
   const confirmLogout = () => {
     dispatch(logout());
+    appDispatch(clearNotifications());
     setShowLogoutModal(false);
     navigate("/");
   };

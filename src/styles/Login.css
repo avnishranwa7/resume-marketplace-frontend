@@ -130,6 +130,22 @@
   text-align: center;
 }
 
+.show-password-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4361ee;
+  font-size: 1.35rem;
+  padding: 0;
+  transition: color 0.18s;
+  display: flex;
+  align-items: center;
+}
+
+.show-password-btn:hover {
+  color: #3730a3;
+}
+
 @media (max-width: 768px) {
   .login-container {
     padding: 1rem;

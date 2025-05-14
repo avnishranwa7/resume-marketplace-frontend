@@ -113,6 +113,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     message: string;
     severity: AlertColor;
   }>({ open: false, message: "", severity: "info" });
+  const [showProjectErrors, setShowProjectErrors] = useState(false);
 
   const { mutate: parse, isPending: parsing } = useParseResume(
     (data) => {
@@ -172,6 +173,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     } catch {
       return null;
     }
+  };
+
+  // Wrap onSave to set showProjectErrors
+  const handleSave = () => {
+    const projects = editProfile?.projects || [];
+    const hasProjectError = projects.some(
+      (p) => !p.name?.trim() || !p.description?.trim()
+    );
+    setShowProjectErrors(true);
+    if (hasProjectError) return;
+    if (onSave) onSave();
   };
 
   return (
@@ -426,7 +438,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   onClick={() =>
                     parse(
                       extractGoogleDriveFileId(editProfile.driveLink ?? "") ??
-                        ""
+                      ""
                     )
                   }
                   disabled={
@@ -556,10 +568,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <div className={styles.expSection}>
           <h3>Experience</h3>
           {editMode &&
-          editProfile &&
-          onExperienceChange &&
-          onAddExperience &&
-          onRemoveExperience ? (
+            editProfile &&
+            onExperienceChange &&
+            onAddExperience &&
+            onRemoveExperience ? (
             <>
               {editProfile.experience.map((exp, idx) => (
                 <div key={idx} className={styles.expEditCard}>
@@ -634,7 +646,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                               className:
                                 styles.editInput +
                                 (experienceErrors &&
-                                experienceErrors[idx]?.startDate
+                                  experienceErrors[idx]?.startDate
                                   ? " " + styles.inputError
                                   : ""),
                               placeholder: "MM/YYYY",
@@ -683,7 +695,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                               className:
                                 styles.editInput +
                                 (experienceErrors &&
-                                experienceErrors[idx]?.endDate
+                                  experienceErrors[idx]?.endDate
                                   ? " " + styles.inputError
                                   : ""),
                               placeholder: "MM/YYYY",
@@ -803,8 +815,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   {exp.currentlyWorking
                     ? "Present"
                     : exp.endDate
-                    ? formatDateForInput(exp.endDate)
-                    : ""}
+                      ? formatDateForInput(exp.endDate)
+                      : ""}
                 </div>
                 <p className={styles.expViewDescription}>{exp.description}</p>
               </div>
@@ -813,14 +825,137 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             <p className={styles.placeholderText}>No experience added yet.</p>
           )}
         </div>
+        {/* Projects Section */}
+        <div className={styles.expSection}>
+          <h3>Projects</h3>
+          {editMode && editProfile && onChange ? (
+            <>
+              {(editProfile.projects || []).map((project, idx) => {
+                const nameError = !project.name?.trim();
+                const descError = !project.description?.trim();
+                return (
+                  <div key={idx} className={styles.expEditCard}>
+                    <div className={styles.expEditRow}>
+                      <div className={styles.inputGroup}>
+                        <input
+                          className={
+                            styles.editInput + (showProjectErrors && nameError ? ' ' + styles.inputError : '')
+                          }
+                          placeholder="Project Name"
+                          value={project.name}
+                          onChange={e => {
+                            const updated = [...(editProfile.projects || [])];
+                            updated[idx] = { ...updated[idx], name: e.target.value };
+                            if (onChange) {
+                              onChange({
+                                target: { name: "projects", value: updated }
+                              } as unknown as React.ChangeEvent<HTMLInputElement>);
+                            }
+                          }}
+                          required
+                        />
+                        {showProjectErrors && nameError && (
+                          <div className={styles.fieldError}>Project name is required</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.expEditRow}>
+                      <div className={styles.inputGroup}>
+                        <textarea
+                          className={
+                            styles.editTextarea + (showProjectErrors && descError ? ' ' + styles.inputError : '')
+                          }
+                          placeholder="Project Description"
+                          value={project.description}
+                          ref={el => {
+                            if (el) {
+                              el.style.height = "auto";
+                              el.style.height = el.scrollHeight + "px";
+                            }
+                          }}
+                          onChange={e => {
+                            const updated = [...(editProfile.projects || [])];
+                            updated[idx] = { ...updated[idx], description: e.target.value };
+                            if (onChange) {
+                              onChange({
+                                target: { name: "projects", value: updated }
+                              } as unknown as React.ChangeEvent<HTMLInputElement>);
+                            }
+                            e.target.style.height = "auto";
+                            e.target.style.height = e.target.scrollHeight + "px";
+                          }}
+                          rows={1}
+                          required
+                        />
+                        {showProjectErrors && descError && (
+                          <div className={styles.fieldError}>Project description is required</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.expRemoveBtnRow}>
+                      <IconButton
+                        aria-label="remove project"
+                        onClick={() => {
+                          const updated = [...(editProfile.projects || [])];
+                          updated.splice(idx, 1);
+                          if (onChange) {
+                            onChange({
+                              target: { name: "projects", value: updated }
+                            } as unknown as React.ChangeEvent<HTMLInputElement>);
+                          }
+                        }}
+                        className={styles.expRemoveBtn}
+                        size="small"
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </div>
+                  </div>
+                );
+              })}
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  const updated = [...(editProfile.projects || []), { name: "", description: "" }];
+                  if (onChange) {
+                    onChange({
+                      target: { name: "projects", value: updated }
+                    } as unknown as React.ChangeEvent<HTMLInputElement>);
+                  }
+                }}
+                className={styles.addExpBtn}
+                sx={{
+                  marginTop: "0.5rem",
+                  color: "#4361EE",
+                  borderColor: "#4361EE",
+                  fontWeight: 600,
+                  width: "100%",
+                }}
+              >
+                + Add Project
+              </Button>
+            </>
+          ) : profile.projects && profile.projects.length > 0 ? (
+            profile.projects.map((project, idx) => (
+              <div key={idx} className={styles.expViewCard}>
+                <div className={styles.expViewHeader}>
+                  <span className={styles.expViewRole}>{project.name}</span>
+                </div>
+                <p className={styles.expViewDescription}>{project.description}</p>
+              </div>
+            ))
+          ) : (
+            <p className={styles.placeholderText}>No projects added yet.</p>
+          )}
+        </div>
         {/* Education Section */}
         <div className={styles.expSection}>
           <h3>Education</h3>
           {editMode &&
-          editProfile &&
-          onEducationChange &&
-          onAddEducation &&
-          onRemoveEducation ? (
+            editProfile &&
+            onEducationChange &&
+            onAddEducation &&
+            onRemoveEducation ? (
             <>
               {editProfile.education.map((edu, idx) => (
                 <div key={idx} className={styles.expEditCard}>
@@ -901,7 +1036,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                               className:
                                 styles.editInput +
                                 (educationErrors &&
-                                educationErrors[idx]?.startDate
+                                  educationErrors[idx]?.startDate
                                   ? " " + styles.inputError
                                   : ""),
                               placeholder: "MM/YYYY",
@@ -949,7 +1084,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                               className:
                                 styles.editInput +
                                 (educationErrors &&
-                                educationErrors[idx]?.endDate
+                                  educationErrors[idx]?.endDate
                                   ? " " + styles.inputError
                                   : ""),
                               placeholder: "MM/YYYY",
@@ -1064,14 +1199,14 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   />
                   {edu.startDate ? formatDateForInput(edu.startDate) : ""}
                   {edu.startDate &&
-                  (edu.currentlyStudying || edu.ongoing || edu.endDate)
+                    (edu.currentlyStudying || edu.ongoing || edu.endDate)
                     ? " - "
                     : ""}
                   {edu.currentlyStudying || edu.ongoing
                     ? "Present"
                     : edu.endDate
-                    ? formatDateForInput(edu.endDate)
-                    : ""}
+                      ? formatDateForInput(edu.endDate)
+                      : ""}
                 </div>
                 {edu.grade && (
                   <div className={styles.expViewDescription}>
@@ -1109,7 +1244,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             <Button
               variant="contained"
               color="primary"
-              onClick={onSave}
+              onClick={handleSave}
               className={styles.editBtn}
               sx={{
                 color: "#fff !important",

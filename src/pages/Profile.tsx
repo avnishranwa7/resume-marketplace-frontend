@@ -319,6 +319,7 @@ const Profile: React.FC = () => {
       experience: editProfile.experience,
       skills: editProfile.skills,
       education: educationWithCurrentlyStudying,
+      projects: editProfile.projects,
       driveLink: editProfile.driveLink,
       phone: editProfile.phone?.toString(),
       immediatelyAvailable: editProfile.immediatelyAvailable,
@@ -384,6 +385,11 @@ const Profile: React.FC = () => {
         };
       });
 
+      const projects = (parsed.projects || []).map((project) => ({
+        name: project.title || "",
+        description: project.details.join("\n") || "",
+      }));
+
       return {
         ...prev,
         about: parsed.about.join("\n") || prev.about,
@@ -392,6 +398,7 @@ const Profile: React.FC = () => {
         education: education ?? prev.education,
         name: parsed.name ?? prev.name,
         keywords: parsed.keywords ?? [],
+        projects: projects ?? prev.projects,
       };
     });
   };
