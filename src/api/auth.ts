@@ -19,7 +19,7 @@ export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
 };
 
 export const signupUser = async (data: any) => {
-  const response = await axiosInstance.post("/auth/signup", data);
+  const response = await axiosInstance.put("/auth/signup", data);
   return response.data;
 };
 
