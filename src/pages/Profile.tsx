@@ -250,6 +250,16 @@ const Profile: React.FC = () => {
       return;
     }
 
+    // Role validation
+    if (!editProfile.role || !editProfile.role.trim()) {
+      setSnackbar({
+        open: true,
+        message: "Please select a role",
+        severity: "error",
+      });
+      return;
+    }
+
     // Phone number validation
     if (!editProfile.phone || !editProfile.phone.toString().trim()) {
       setSnackbar({
