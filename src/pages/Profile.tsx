@@ -24,6 +24,7 @@ const Profile: React.FC = () => {
 
   const [editMode, setEditMode] = useState(false);
   const [editProfile, setEditProfile] = useState<ProfileData | undefined>();
+  const [skillsInput, setSkillsInput] = useState("");
   const [experienceErrors, setExperienceErrors] = useState<
     { company?: string; role?: string; startDate?: string; endDate?: string }[]
   >([]);
@@ -82,9 +83,18 @@ const Profile: React.FC = () => {
   };
 
   const handleSkillsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSkillsInput(value);
+    
     setEditProfile((prev) =>
       prev
-        ? { ...prev, skills: e.target.value.split(",").map((s) => s.trim()) }
+        ? {
+            ...prev,
+            skills: value
+              .split(",")
+              .map((s) => s.trim())
+              .filter((s) => s !== ""),
+          }
         : prev
     );
   };
@@ -217,11 +227,13 @@ const Profile: React.FC = () => {
       ...profile,
       education: profile.education || [],
     });
+    setSkillsInput(profile.skills.join(", "));
     setEditMode(true);
   };
 
   const handleCancel = () => {
     setEditProfile(profile);
+    setSkillsInput("");
     setEditMode(false);
   };
 
@@ -432,6 +444,7 @@ const Profile: React.FC = () => {
           onSave={handleSave}
           onChange={handleChange}
           onSkillsChange={handleSkillsChange}
+          skillsInput={skillsInput}
           onExperienceChange={handleExperienceChange}
           onAddExperience={handleAddExperience}
           onRemoveExperience={handleRemoveExperience}

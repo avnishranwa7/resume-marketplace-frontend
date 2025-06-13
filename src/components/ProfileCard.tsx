@@ -38,6 +38,7 @@ interface ProfileCardProps {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   onSkillsChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  skillsInput?: string;
   onExperienceChange?: (
     idx: number,
     field: string,
@@ -97,6 +98,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   onSave,
   onChange,
   onSkillsChange,
+  skillsInput,
   onExperienceChange,
   onAddExperience,
   onRemoveExperience,
@@ -1225,7 +1227,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             <input
               className={styles.editInput}
               name="skills"
-              value={editProfile.skills.join(", ")}
+              value={skillsInput}
               onChange={onSkillsChange}
               placeholder="Comma separated skills"
             />
